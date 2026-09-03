@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "38f826fe72a189f5",
+    "id": "baebb1d465886a72",
     "type": "split",
     "children": [
       {
-        "id": "f97623a85f0ca9f2",
+        "id": "cd47cec073c7dfa4",
         "type": "tabs",
         "children": [
           {
-            "id": "cc46282ddc80f17c",
+            "id": "8f41c6ab4549b80b",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -23,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "6050245c1ac64f7f",
+    "id": "a308f925474f876d",
     "type": "split",
     "children": [
       {
-        "id": "4fc70a5e0112b2e2",
+        "id": "b2678f9a80b077ca",
         "type": "tabs",
         "children": [
           {
-            "id": "69b78b39abdb2527",
+            "id": "7ae71e1b188408e0",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +46,7 @@
             }
           },
           {
-            "id": "048a322ffcc97d2d",
+            "id": "89b66342cd1bd720",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,7 +63,7 @@
             }
           },
           {
-            "id": "bcd46298c2d5dd72",
+            "id": "c879c774afd73d4b",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -82,15 +82,15 @@
     "width": 300
   },
   "right": {
-    "id": "42fce0d72b8f3b35",
+    "id": "2fb16cda3e3ee650",
     "type": "split",
     "children": [
       {
-        "id": "e2c96aeea5fb1060",
+        "id": "ef393bc0fb5fb3c0",
         "type": "tabs",
         "children": [
           {
-            "id": "bbdf90194628b7c6",
+            "id": "98deaab3971a0d36",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -108,7 +108,7 @@
             }
           },
           {
-            "id": "ef9dcf7235bf4894",
+            "id": "45b21ad683b4f6c6",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -121,7 +121,7 @@
             }
           },
           {
-            "id": "36f6e908e755d2ed",
+            "id": "1265cc5ac1e986c9",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -136,7 +136,7 @@
             }
           },
           {
-            "id": "2b5a860014c3df17",
+            "id": "691f3c2ac02fa506",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -150,7 +150,7 @@
             }
           },
           {
-            "id": "b5046faf50c92741",
+            "id": "41f47a8a51effe40",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -162,13 +162,23 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
+          },
+          {
+            "id": "3f7a1fd6b045a04d",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,9 +188,25 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "cc46282ddc80f17c",
-  "lastOpenFiles": []
+  "active": "3f7a1fd6b045a04d",
+  "lastOpenFiles": [
+    "AGENTS.md",
+    "docs/architecture.md",
+    "README.md",
+    "docs/obsidian-setup.md",
+    "docs/roadmap (1).md",
+    "docs/decisions.md",
+    "docs/prompts (1).md",
+    "docs/architecture (1).md",
+    "docs/specification (1).md",
+    "README (1).md",
+    "docs/roadmap.md",
+    "docs/prompts.md",
+    "docs/specification.md",
+    "docs"
+  ]
 }
