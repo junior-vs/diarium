@@ -58,7 +58,38 @@ uma tabela visual separada.
 **Motivo:** Preencher os mesmos dados em dois lugares (front-matter + tabela) gera trabalho
 duplicado, o que vai contra o princípio de baixa fricção (ADR-005).
 
-## ADR-008: Uso mínimo de plugins de terceiros no Obsidian
+## ADR-009: Separação core + CLI desde o MVP
+**Data:** 2026-09-03
+**Decisão:** Estruturar o projeto Python em `core/` (lógica de negócio: parser, análise,
+relatório, LLM adapter) separado de `cli/` (ponto de entrada). CLI chama apenas `core/`,
+nunca contém regra de negócio.
+**Motivo:** Mobile app e bot Telegram já estão planejados (roadmap v2/v3), não são
+especulação. Separar agora tem custo baixo (organização de módulos) e evita reescrever
+a lógica de análise quando um segundo ponto de entrada for adicionado.
+**Alternativas consideradas:** CLI monolítico simples, refatorar depois — descartado
+porque lógica de negócio tende a vazar para dentro do CLI se não isolada desde o início.
+
+## ADR-010: Saída estruturada (JSON) do LLM, não texto livre
+**Data:** 2026-09-03
+**Decisão:** O `LLMAdapter` retorna dados estruturados (validados via Pydantic), usando
+JSON schema / function calling do provedor, em vez de texto livre parseado por regex.
+**Motivo:** Texto livre é frágil de parsear e falha silenciosamente. RF10 (correlacionar
+hábitos com distorções no relatório) exige dados programáticos. Resposta fora do schema
+deve falhar de forma explícita, não ser aceita "quase certa".
+**Implicação:** `docs/prompts.md` deve refletir os prompts como parte de uma chamada com
+schema/function definido, não apenas texto de instrução solto.
+
+## ADR-011: Gemini como primeiro provedor de LLM
+**Data:** 2026-09-03
+**Decisão:** Implementar `GeminiAdapter` como primeira implementação concreta de
+`LLMAdapter` (via SDK `google-generativeai`), suportando saída estruturada nativamente.
+**Motivo:** Escolha do usuário para o MVP. Suporte nativo a `response_schema` facilita
+ADR-010 sem lógica adicional de parsing.
+**Implicação:** Segundo provedor (ex: OpenAI, Claude) deve ser adicionado apenas como
+novo adapter implementando a mesma interface — sem alterar `core/analysis.py` ou
+`core/report.py`.
+
+## ADR-012: Uso mínimo de plugins de terceiros no Obsidian
 **Data:** 2026-09-03
 **Decisão:** Configuração do vault prioriza plugins core (Daily notes, Templates, Tags,
 Search, Backlinks), evitando Dataview, Templater e afins.

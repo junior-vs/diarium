@@ -23,6 +23,29 @@ e geração de arquivos markdown de saída (análise individual e relatórios co
 
 ## 2. Componentes
 
+### 2.0 Estrutura de Projeto (core + CLI)
+O código é organizado separando lógica de negócio (`core/`) do ponto de entrada (`cli/`),
+preparando reuso futuro por mobile app e bot Telegram sem reescrever a lógica de análise
+(ver ADR-009).
+
+```
+diarium/
+  core/
+    models.py          # Pydantic: EntryData, AnalysisResult, HabitData
+    parser.py           # Leitura de markdown + front-matter (independente de LLM)
+    llm/
+      base.py           # Interface abstrata LLMAdapter
+      gemini_adapter.py # Implementação Gemini (JSON schema / function calling)
+    analysis.py          # Orquestra: parser + adapter → AnalysisResult
+    report.py            # Consolidação periódica (usa dados estruturados + LLM)
+  cli/
+    main.py             # Comandos `analisar` e `relatorio`, chama core/
+  config.py              # Carrega provedor/API key (env var / config file)
+```
+
+Regra: CLI (e futuramente o backend de mobile/bot) chama apenas `core/analysis.py` e
+`core/report.py`. Nenhum ponto de entrada deve chamar o `LLMAdapter` diretamente.
+
 ### 2.1 CLI
 Ponto de entrada. Comandos principais:
 - `analisar --arquivo <path>` — processa uma entrada individual.
@@ -34,10 +57,21 @@ Responsável por ler o arquivo do diário e extrair o conteúdo textual relevant
 
 ### 2.3 LLM Adapter
 Camada de abstração entre o core do sistema e o provedor de LLM. Define uma interface
-comum (ex: `analisar(texto: string): AnaliseResult`) implementada por adapters específicos
-(Claude, OpenAI, e futuramente modelo local via Ollama).
+comum implementada por adapters específicos:
 
-Objetivo: trocar de provedor alterando apenas configuração, sem tocar no core.
+```python
+class LLMAdapter(ABC):
+    def analyze_entry(self, text: str, habit_data: dict) -> AnalysisResult: ...
+    def consolidate(self, analyses: list[AnalysisResult], habit_data: list[dict]) -> ReportResult: ...
+```
+
+Primeira implementação: **Gemini** (via `google-generativeai`), usando saída estruturada
+(JSON schema / function calling) — não texto livre parseado por regex. A resposta é
+validada contra o schema Pydantic no boundary; resposta fora do schema falha de forma
+explícita, não é aceita silenciosamente.
+
+Objetivo: trocar de provedor (ou migrar para modelo local) alterando apenas configuração
+e adicionando um novo adapter, sem tocar no core.
 
 ### 2.4 Motor de Análise TCC
 Contém os prompts estruturados (ver `prompts.md`) enviados ao LLM Adapter, e o parsing
@@ -77,4 +111,6 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 ## 6. Extensibilidade Futura
 - Watch de pasta (automação).
 - Adapter para modelo local (Ollama).
-- Possível interface web/mobile consumindo o mesmo core.
+- App mobile e bot Telegram consumindo `core/` — nesse momento, `core/` provavelmente
+  precisa ser exposto via API (REST/RPC), já que mobile e bot não têm acesso direto ao
+  filesystem do vault Obsidian. Isso é uma mudança de camada de acesso, não do core em si.
