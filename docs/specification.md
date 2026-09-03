@@ -7,9 +7,10 @@ cognitivas e estruturar registros no modelo ABC/ABCDE. Uso pessoal, com output t
 aproveitável pelo psicólogo do usuário.
 
 ## 2. Objetivos
-- Ajudar o usuário a registrar e refletir sobre pensamentos/eventos diários.
-- Identificar automaticamente distorções cognitivas nos registros.
-- Estruturar entradas livres no modelo ABC/ABCDE quando aplicável.
+- Ajudar o usuário a registrar e refletir sobre pensamentos/eventos diários, com baixa carga cognitiva (perfil TDAH).
+- Identificar automaticamente distorções cognitivas nos registros, quando presentes.
+- Estruturar entradas livres no modelo ABC/ABCDE quando aplicável (opcional, não obrigatório por entrada).
+- Rastrear hábitos e métricas de autorregulação (sono, energia, estresse, hidratação, etc.) de forma estruturada.
 - Gerar relatórios periódicos consolidados para acompanhamento (próprio e/ou terapêutico).
 
 ## 3. Escopo
@@ -18,9 +19,10 @@ aproveitável pelo psicólogo do usuário.
 - Script/comando manual que lê arquivo(s) markdown do Obsidian.
 - Processamento via API de LLM (agnóstico de provedor).
 - Geração de:
-  - Arquivo markdown de análise por entrada (distorções identificadas, estrutura ABC/ABCDE sugerida).
-  - Relatório periódico consolidado (padrões recorrentes, evolução, distorções mais frequentes).
-- Prompts guiados para orientar o registro (biblioteca de prompts TCC).
+  - Arquivo markdown de análise por entrada (distorções identificadas, estrutura ABC/ABCDE sugerida quando aplicável).
+  - Relatório periódico consolidado (padrões recorrentes, evolução, distorções mais frequentes, correlação entre hábitos e humor/estresse).
+- Prompts guiados fixos para orientar o registro (biblioteca de prompts TCC), divididos em blocos manhã/noite.
+- Template de diário com front-matter estruturado para tracking de hábitos (sono, energia, estresse, hidratação, sol, atividade física, leitura, estudo, MIT).
 
 ### Fora do escopo (v1)
 - Automação/watch de pasta.
@@ -39,6 +41,8 @@ aproveitável pelo psicólogo do usuário.
 | RF06 | O sistema deve permitir gerar relatório consolidado a partir de múltiplas entradas (intervalo de datas configurável). |
 | RF07 | O sistema deve oferecer prompts guiados (biblioteca pré-definida) para auxiliar o usuário a escrever a entrada. |
 | RF08 | O provedor de LLM deve ser configurável (API key + endpoint/modelo), permitindo troca futura sem alterar o core. |
+| RF09 | O sistema deve ler campos estruturados do front-matter (hábitos, humor, sono, etc.) para compor o relatório consolidado, sem depender do LLM para extrair esses dados. |
+| RF10 | O relatório consolidado deve correlacionar hábitos rastreados (sono, estresse, energia) com padrões emocionais/distorções identificadas no período. |
 
 ## 5. Requisitos Não-Funcionais
 | ID | Requisito |
@@ -47,6 +51,7 @@ aproveitável pelo psicólogo do usuário.
 | RNF02 | Arquitetura deve isolar a camada de LLM (adapter/interface) para permitir troca de provedor (API → modelo local) sem refatoração ampla. |
 | RNF03 | Formato de entrada/saída deve ser markdown puro, compatível com Obsidian. |
 | RNF04 | Execução via linha de comando (CLI), sem dependência de interface gráfica própria. |
+| RNF05 | O template de entrada deve minimizar carga cognitiva e função executiva exigida: prompts fixos, curtos, sem exigência de texto narrativo longo (design orientado a TDAH). |
 
 ## 6. Critérios de Aceite
 - Rodar o comando sobre um arquivo de diário gera um markdown de análise coerente com TCC.

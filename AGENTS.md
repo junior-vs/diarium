@@ -44,7 +44,16 @@ Ao modificar ou criar código, respeite rigorosamente as decisões arquiteturais
    - Todas as chamadas à API devem passar por uma interface/abstração (`LLMAdapter`), permitindo alternar entre provedores (OpenAI, Anthropic Claude, Gemini) ou modelos locais (Ollama no futuro) via configuração, sem alterar a regra de negócio.
 4. **Sem Interface Gráfica Própria (ADR-004):**
    - O front-end de leitura e escrita é o próprio Obsidian. Não criar GUIs ou aplicações web/mobile na v1.
-5. **Plugins Core no Obsidian (ADR-005):**
+5. **Template de Baixa Carga Cognitiva (ADR-005):**
+   - O template de entrada é desenhado para reduzir função executiva exigida (perfil TDAH): brain dump livre, prompts fixos curtos (manhã/noite), sem exigência de texto narrativo longo.
+   - O modelo ABC/ABCDE é **opcional**, preenchido apenas quando houver um gatilho relevante — nunca obrigatório por entrada.
+6. **Tracking de Hábitos via Front-matter (ADR-006):**
+   - Hábitos e métricas (sono, estresse, energia/humor, hidratação, sol da manhã, atividade física, leitura, estudo, MIT) são campos estruturados no front-matter, não texto livre.
+   - O CLI deve ler esses campos diretamente para compor o relatório consolidado — nunca depender do LLM para extrair esses dados de texto.
+   - Campos como `sono` e `hidratacao` podem ser preenchidos a partir de dados de dispositivo (celular/smartwatch); não assumir que serão sempre digitados manualmente.
+7. **Sem Redundância entre Front-matter e Conteúdo Visual (ADR-007):**
+   - Não duplicar os mesmos dados em dois formatos (ex: front-matter + tabela). Se um checklist visual for necessário para leitura humana, ele deve espelhar o front-matter, nunca ser uma segunda fonte de verdade.
+8. **Plugins Core no Obsidian (ADR-008):**
    - O vault utiliza apenas plugins nativos do Obsidian (Daily notes, Templates, Tags, Search, Backlinks).
    - O script externo lê o frontmatter e escreve links `[[YYYY-MM-DD]]` para backlinks automáticos. Evitar dependência de plugins comunitários como Dataview ou Templater.
 
@@ -55,7 +64,7 @@ Ao modificar ou criar código, respeite rigorosamente as decisões arquiteturais
 Conforme detalhado em [`docs/obsidian-setup.md`](file:///e:/develop/repos/misc/diarium/docs/obsidian-setup.md), a estrutura de pastas esperada pelo sistema é:
 
 ```text
-/ (vault root)
+/diarium-vault (vault root)
 ├── diario/          # Entradas brutas escritas pelo usuário (YYYY-MM-DD.md)
 ├── analises/        # Saídas geradas pelo CLI (YYYY-MM-DD-analise.md)
 ├── relatorios/      # Consolidações periódicas (YYYY-MM-relatorio.md)
@@ -70,8 +79,19 @@ Conforme detalhado em [`docs/obsidian-setup.md`](file:///e:/develop/repos/misc/d
   data: YYYY-MM-DD
   tags: [diario]
   analisado: false
+  mit: 
+  sono: 
+  estresse: 
+  energia_humor: 
+  hidratacao: 
+  sol_manha: false
+  atividade_fisica: false
+  leitura: false
+  estudo: false
   ---
   ```
+  Ver template completo em `docs/template-diario.md`. Não remover ou renomear campos
+  sem atualizar `docs/obsidian-setup.md`, `docs/prompts.md` e o parser do CLI juntos.
 - **Análise individual (`/analises/YYYY-MM-DD-analise.md`):**
   ```markdown
   ---
@@ -113,12 +133,49 @@ Respeite as fronteiras de versão descritas em [`docs/roadmap.md`](file:///e:/de
 
 ---
 
-## 7. Referência da Documentação
+## 7. Fluxo de Trabalho para Agentes
+
+- **Documentação e código andam juntos.** Se uma mudança altera requisito, arquitetura,
+  prompt ou template, atualize o(s) arquivo(s) correspondente(s) em `docs/` no mesmo
+  conjunto de alterações — nunca deixe a documentação desatualizada "para depois".
+- **Antes de implementar, leia a documentação relevante.** Não assuma decisões — verifique
+  `docs/decisions.md` antes de introduzir dependência, dado persistido ou mudança de fluxo.
+- **Mudança de decisão arquitetural exige novo ADR.** Não edite um ADR existente para
+  refletir uma nova decisão; adicione um novo ADR e, se o anterior for substituído,
+  marque-o explicitamente como superado (ex: "Superado por ADR-00X").
+- **Não expanda o escopo da v1 sem solicitação explícita.** Ver Seção 6. Se uma tarefa
+  parecer exigir algo fora do escopo (ex: watcher, GUI), sinalize isso em vez de implementar.
+
+## 8. Convenções de Código
+
+- **Stack ainda não fixada.** Antes de introduzir uma linguagem/framework, verificar se já
+  existe uma decisão registrada em `docs/decisions.md`; se não houver, registrar um ADR
+  justificando a escolha antes de prosseguir.
+- **Segredos e configuração:** API keys e endpoints de LLM devem vir de variáveis de
+  ambiente ou arquivo de config não versionado (ex: `.env`, `config.yaml` no `.gitignore`).
+  Nunca hardcode credenciais, nunca commit arquivos de config com valores reais.
+- **LLM Adapter:** qualquer código que chame um provedor de LLM deve implementar a
+  interface comum do adapter (ver ADR-003) — nunca acoplar lógica de negócio a uma API
+  específica.
+- **Parsing de front-matter:** deve ser tolerante a campos ausentes ou vazios (o usuário
+  pode não preencher todos os hábitos todo dia); nunca falhar o processamento por um
+  campo opcional vazio.
+
+## 9. Testes e Validação
+
+- Mudanças no LLM Adapter devem ser testáveis sem chamada real à API (usar mock/stub).
+- Mudanças no parser de markdown/front-matter devem ter casos de teste cobrindo: campos
+  ausentes, front-matter vazio, e entradas com apenas brain dump (sem gatilho preenchido).
+- Antes de considerar uma tarefa concluída, validar contra os Critérios de Aceite em
+  `docs/specification.md`.
+
+## 10. Referência da Documentação
 
 Para aprofundar qualquer tema, consulte os arquivos em `docs/`:
-- [`docs/specification.md`](file:///e:/develop/repos/misc/diarium/docs/specification.md) — Requisitos funcionais (RF01–RF08) e não-funcionais (RNF01–RNF04).
+- [`docs/specification.md`](file:///e:/develop/repos/misc/diarium/docs/specification.md) — Requisitos funcionais (RF01–RF10) e não-funcionais (RNF01–RNF05).
 - [`docs/architecture.md`](file:///e:/develop/repos/misc/diarium/docs/architecture.md) — Fluxo de dados, componentes e interfaces.
 - [`docs/decisions.md`](file:///e:/develop/repos/misc/diarium/docs/decisions.md) — ADRs detalhadas com contexto e justificativas.
 - [`docs/prompts.md`](file:///e:/develop/repos/misc/diarium/docs/prompts.md) — Biblioteca de prompts de escrita, análise e consolidação.
 - [`docs/obsidian-setup.md`](file:///e:/develop/repos/misc/diarium/docs/obsidian-setup.md) — Configuração do Obsidian e templates.
 - [`docs/roadmap.md`](file:///e:/develop/repos/misc/diarium/docs/roadmap.md) — Planejamento de versões.
+- [`docs/template-diario.md`](file:///e:/develop/repos/misc/diarium/docs/template-diario.md) — Template canônico da entrada diária.

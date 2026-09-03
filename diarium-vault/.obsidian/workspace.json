@@ -11,10 +11,14 @@
             "id": "8f41c6ab4549b80b",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "diary/2026/September/2026-09-03.md",
+                "mode": "preview",
+                "source": true
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "2026-09-03"
             }
           }
         ]
@@ -189,11 +193,21 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "zk-prefixer:Create new unique note": false
     }
   },
-  "active": "3f7a1fd6b045a04d",
+  "active": "8f41c6ab4549b80b",
   "lastOpenFiles": [
+    "_templates/template-diario.md",
+    "diary/2026/September/2026-09-03.md",
+    "_templates/template-diario (1).md",
+    "diary/2026/September",
+    "diary/2026",
+    "diary/2026-09-03.md",
+    "diary",
+    "template-diario.md.md",
+    "_templates",
     "AGENTS.md",
     "docs/architecture.md",
     "README.md",

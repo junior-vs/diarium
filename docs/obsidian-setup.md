@@ -49,6 +49,9 @@ Ativar em `Configurações > Plugins principais`:
 
 ## 4. Template de Diário
 
+Template revisado para baixa carga cognitiva (ver ADR-005 em `decisions.md`), com brain
+dump livre, prompts fixos manhã/noite, e tracking de hábitos via front-matter.
+
 Conteúdo de `/templates/template-diario.md`:
 
 ```markdown
@@ -56,26 +59,67 @@ Conteúdo de `/templates/template-diario.md`:
 data: {{date}}
 tags: [diario]
 analisado: false
+mit: 
+sono: 
+estresse: 
+energia_humor: 
+hidratacao: 
+sol_manha: false
+atividade_fisica: false
+leitura: false
+estudo: false
 ---
 
-## Evento
-<!-- O que aconteceu hoje que gerou uma reação emocional forte? -->
+## 📊 Check-in Rápido
+- [ ] **MIT (Prioridade do Dia):** 
+- [ ] **Sono:** ___ hrs | **Energia/Humor (1-5):** ___ | **Estresse (1-5):** ___
+- [ ] **Hábitos:** Sol ☀️ | Ativ. Física 🏃 | Leitura 📚 | Estudo 📖 | Água 💧 (copos: )
 
-## Pensamento
-<!-- Que pensamento passou pela sua cabeça nesse momento? -->
+---
 
-## Emoção
-<!-- Que emoção você sentiu, e em que intensidade (0-10)? -->
+## 🧠 Brain Dump
+<!-- Espaço livre, sem regras. Solte tudo que estiver na cabeça. -->
 
-## Reação
-<!-- Como você reagiu (comportamento)? -->
 
-## Reflexão
-<!-- Existe alguma outra forma de interpretar essa situação? -->
+---
+
+## ☀️ Manhã
+- **O que precisa ser feito hoje?**
+- **Como estou me sentindo agora?**
+
+## 🌙 Noite
+- **O que deu certo hoje?**
+
+---
+
+## 🎯 Registro de Gatilho (Opcional)
+<!-- Use apenas se sentir necessidade de processar uma emoção forte -->
+- **Evento:** 
+- **Pensamento:** 
+- **Emoção:**
 ```
 
-O front-matter (`data`, `tags`, `analisado`) é lido pelo script externo para localizar
-e filtrar entradas — sem exigir plugin de terceiros (Dataview, etc.) dentro do Obsidian.
+### Campos do front-matter
+
+| Campo | Tipo | Origem sugerida |
+|---|---|---|
+| `mit` | texto curto | manual |
+| `sono` | número (horas) | dispositivo (celular/smartwatch), quando disponível |
+| `estresse` | escala 1-5 | manual |
+| `energia_humor` | escala 1-5 | manual |
+| `hidratacao` | número (copos) | dispositivo, quando disponível |
+| `sol_manha` | booleano | manual |
+| `atividade_fisica` | booleano | manual |
+| `leitura` | booleano | manual |
+| `estudo` | booleano | manual |
+
+O checklist "Check-in Rápido" reflete os mesmos valores do front-matter — preencher em
+um lugar só (recomendado: front-matter, já que é o que o CLI lê) evita trabalho duplicado
+(ver ADR-007).
+
+O front-matter completo (`data`, `tags`, `analisado`, + campos de hábito) é lido pelo
+script externo para localizar, filtrar entradas e compor o relatório consolidado — sem
+exigir plugin de terceiros (Dataview, etc.) dentro do Obsidian.
 
 ## 5. Convenção de Vínculo Análise ↔ Entrada
 
