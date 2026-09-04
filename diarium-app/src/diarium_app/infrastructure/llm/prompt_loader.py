@@ -3,7 +3,7 @@ from __future__ import annotations
 from importlib.resources import files
 from pathlib import Path
 
-PROMPTS_PACKAGE = "diarium_app.core.llm.prompts"
+PROMPTS_PACKAGE = "diarium_app.infrastructure.llm.prompts"
 
 
 def load_prompt(name: str) -> str:

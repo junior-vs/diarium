@@ -20,6 +20,7 @@ class HabitData(BaseModel):
 
 
 class EntryData(BaseModel):
+	"""Representa os dados de uma entrada do diário."""
 	model_config = {"extra": "ignore"}
 
 	data: date | None = None
@@ -29,6 +30,7 @@ class EntryData(BaseModel):
 
 
 class CognitiveDistortion(BaseModel):
+	"""Representa uma distorção cognitiva identificada em uma entrada do diário."""
 	model_config = {"extra": "ignore"}
 
 	tipo: str
@@ -36,6 +38,7 @@ class CognitiveDistortion(BaseModel):
 
 
 class ABCDE(BaseModel):
+	"""Representa a estrutura ABCDE de uma entrada do diário."""
 	model_config = {"extra": "ignore"}
 
 	a: str | None = None
@@ -46,6 +49,7 @@ class ABCDE(BaseModel):
 
 
 class HabitMoodCorrelation(BaseModel):
+	"""Representa a correlação entre um hábito e o humor em uma entrada do diário."""
 	model_config = {"extra": "ignore"}
 
 	habito: str
@@ -53,6 +57,7 @@ class HabitMoodCorrelation(BaseModel):
 
 
 class AnalysisResult(BaseModel):
+	"""Representa o resultado da análise de uma entrada do diário."""
 	model_config = {"extra": "ignore"}
 
 	distorcoes: list[CognitiveDistortion] = Field(default_factory=list)
@@ -62,6 +67,7 @@ class AnalysisResult(BaseModel):
 
 
 class ReportResult(BaseModel):
+	"""Representa o resultado consolidado de múltiplas análises de entradas do diário."""
 	model_config = {"extra": "ignore"}
 
 	distorcoes_recorrentes: list[str] = Field(default_factory=list)

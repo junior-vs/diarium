@@ -6,9 +6,9 @@ from pathlib import Path
 import typer
 
 from ..config import Settings, build_adapter, load_settings
-from ..core.analysis import analyze_entry
-from ..core.parser import parse_entry
-from ..core.report import generate_period_report, write_analysis
+from ..infrastructure.filesystem_entry_repository import FileSystemEntryRepository
+from ..use_cases.analyze_entry import analyze_entry as run_analyze_entry
+from ..use_cases.generate_period_report import generate_period_report
 
 app = typer.Typer(help="Diarium CLI")
 
@@ -21,11 +21,11 @@ def analisar(
 	model: str | None = typer.Option(None, help="Override llm model"),
 	vault_path: Path | None = typer.Option(None, help="Override vault path"),
 ) -> None:
+	"""Analyze a single diary entry using the specified LLM provider and repository."""
 	settings = _load_overrides(provider, api_key, model, vault_path)
-	adapter = build_adapter(settings)
-	entry = parse_entry(arquivo)
-	result = analyze_entry(entry, adapter)
-	analysis_path = write_analysis(entry, result, settings.vault_path)
+	llm = build_adapter(settings)
+	repo = FileSystemEntryRepository(settings.vault_path)
+	_, _, analysis_path = run_analyze_entry(arquivo, llm, repo)
 	typer.echo(str(analysis_path))
 
 
@@ -38,11 +38,13 @@ def relatorio(
 	model: str | None = typer.Option(None, help="Override llm model"),
 	vault_path: Path | None = typer.Option(None, help="Override vault path"),
 ) -> None:
+	"""Generate a consolidated report for a specified period using the specified LLM provider and repository."""
 	settings = _load_overrides(provider, api_key, model, vault_path)
-	adapter = build_adapter(settings)
+	llm = build_adapter(settings)
+	repo = FileSystemEntryRepository(settings.vault_path)
 	start_date = date.fromisoformat(de)
 	end_date = date.fromisoformat(ate)
-	_, report_path = generate_period_report(settings.vault_path, adapter, start_date, end_date)
+	_, report_path = generate_period_report(llm, repo, start_date, end_date)
 	typer.echo(str(report_path))
 
 
@@ -52,6 +54,7 @@ def _load_overrides(
 	model: str | None,
 	vault_path: Path | None,
 ) -> Settings:
+	"""Load the application settings and apply any overrides provided via the CLI."""
 	settings = load_settings()
 	updates: dict[str, object] = {}
 	if provider is not None:

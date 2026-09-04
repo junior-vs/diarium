@@ -5,8 +5,8 @@ import json
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
-from ..models import AnalysisResult, ReportResult
-from .base import LLMAdapter, LLMResponseValidationError
+from ...domain.models import AnalysisResult, ReportResult
+from ...ports.llm_adapter import LLMAdapter, LLMResponseValidationError
 from .prompt_loader import build_analysis_prompt, build_consolidation_prompt
 
 DEFAULT_MODEL_NAME = "gemini-1.5-flash"

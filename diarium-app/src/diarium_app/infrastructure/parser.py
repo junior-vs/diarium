@@ -6,7 +6,7 @@ from typing import cast
 
 import frontmatter
 
-from .models import EntryData, HabitData
+from ..domain.models import EntryData, HabitData
 
 
 def parse_entry(path: str | Path) -> EntryData:

@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
-from ..models import AnalysisResult, ReportResult
+from ..domain.models import AnalysisResult, ReportResult
 
 
 class LLMResponseValidationError(ValueError):
-	"""Raised when the provider returns a payload that does not match the schema."""
+	"""Disparado quando o provedor retorna um payload que não corresponde ao esquema."""
 
 
 class LLMAdapter(ABC):
 	@abstractmethod
 	def analyze_entry(self, text: str, habit_data: Mapping[str, Any]) -> AnalysisResult:
-		"""Analyze a single diary entry and return a structured result."""
+		"""Analisar uma única entrada do diário e retornar um resultado estruturado."""
 
 	@abstractmethod
 	def consolidate(
@@ -21,4 +22,4 @@ class LLMAdapter(ABC):
 		analyses: list[AnalysisResult],
 		habit_data: list[Mapping[str, Any]],
 	) -> ReportResult:
-		"""Consolidate multiple analyses into a report result."""
+		"""Consolidar múltiplas análises em um resultado de relatório."""

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from diarium_app.core.llm import FakeLLMAdapter, build_analysis_prompt, build_consolidation_prompt, load_prompt
-from diarium_app.core.models import AnalysisResult, ReportResult
+from diarium_app.infrastructure.llm import FakeLLMAdapter, build_analysis_prompt, build_consolidation_prompt, load_prompt
+from diarium_app.domain.models import AnalysisResult, ReportResult
 
 
 def test_fake_adapter_returns_structured_analysis() -> None:

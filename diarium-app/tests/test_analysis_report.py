@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from diarium_app.core.analysis import analyze_entry
-from diarium_app.core.llm import FakeLLMAdapter
-from diarium_app.core.parser import parse_entry
-from diarium_app.core.report import build_analysis_markdown, build_report_markdown, generate_period_report, write_analysis
+from diarium_app.use_cases.analyze_entry import analyze_entry
+from diarium_app.infrastructure.llm import FakeLLMAdapter
+from diarium_app.infrastructure.parser import parse_entry
+from diarium_app.formatters.report import build_analysis_markdown, build_report_markdown, generate_period_report, write_analysis
 
 
 def _write_diary(tmp_path: Path, day: str, extra_frontmatter: str = "") -> Path:

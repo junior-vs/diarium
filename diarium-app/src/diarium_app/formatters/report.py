@@ -8,10 +8,10 @@ from typing import Any
 
 import frontmatter
 
-from .analysis import _resolve_entry_date, analyze_entry
-from .llm import LLMAdapter
-from .models import AnalysisResult, EntryData, ReportResult
-from .parser import parse_entry
+from ..use_cases.analyze_entry import _resolve_entry_date, analyze_entry
+from ..infrastructure.llm import LLMAdapter
+from ..domain.models import AnalysisResult, EntryData, ReportResult
+from ..infrastructure.parser import parse_entry
 
 MONTH_NAMES = (
 	"January",
