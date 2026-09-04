@@ -16,6 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
+diario-tcc = "diarium_app:main"
 diarium-app = "diarium_app:main"
 
 [build-system]

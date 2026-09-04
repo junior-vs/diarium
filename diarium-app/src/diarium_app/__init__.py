@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from diarium-app!")
+from .cli.main import main
+
+__all__ = ["main"]
