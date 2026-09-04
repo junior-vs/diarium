@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..domain.entry_date import resolve_entry_date
+from ..domain.entry_date import require_entry_date
 from ..domain.models import AnalysisResult, EntryData
 from ..ports.entry_repository import EntryRepository
 from ..ports.llm_adapter import LLMAdapter
@@ -23,7 +23,15 @@ def analyze_entry(
 
 def run_analysis(entry: EntryData, llm: LLMAdapter) -> AnalysisResult:
 	"""Run analysis on a diary entry using the provided LLM adapter."""
-
-	result = llm.analyze_entry(entry.conteudo, entry.habit_data.model_dump(mode="json"))
-	result.entrada_origem = resolve_entry_date(entry)
+	entry_date = require_entry_date(entry)
+	result = llm.analyze_entry(entry.conteudo, build_entry_payload(entry))
+	result.entrada_origem = entry_date
 	return result
+
+
+def build_entry_payload(entry: EntryData) -> dict[str, object]:
+	"""Build the structured payload sent to the LLM for a single entry."""
+	entry_date = require_entry_date(entry)
+	payload = entry.habit_data.model_dump(mode="json")
+	payload["data"] = entry_date.isoformat()
+	return payload

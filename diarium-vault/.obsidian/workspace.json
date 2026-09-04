@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "diary/2026/September/2026-09-03.md",
-                "mode": "preview",
+                "file": "diary/2026/09/2026-09-04.md",
+                "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "2026-09-03"
+              "title": "2026-09-04"
             }
           }
         ]
@@ -199,8 +199,10 @@
   },
   "active": "8f41c6ab4549b80b",
   "lastOpenFiles": [
-    "_templates/template-diario.md",
     "diary/2026/September/2026-09-03.md",
+    "diary/2026/09/2026-09-04.md",
+    "diary/2026/09",
+    "_templates/template-diario.md",
     "_templates/template-diario (1).md",
     "diary/2026/September",
     "diary/2026",

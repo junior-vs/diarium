@@ -6,7 +6,7 @@ from pathlib import Path
 from ..domain.models import AnalysisResult, ReportResult
 from ..ports.entry_repository import EntryRepository
 from ..ports.llm_adapter import LLMAdapter
-from .analyze_entry import run_analysis
+from .analyze_entry import build_entry_payload, run_analysis
 
 
 def generate_period_report(
@@ -27,7 +27,7 @@ def generate_period_report(
 		repo.mark_source_processed(entry, analysis, analysis_path)
 	report = llm.consolidate(
 		analyses,
-		[entry.habit_data.model_dump(mode="json") for entry in entries],
+		[build_entry_payload(entry) for entry in entries],
 	)
 	report_path = repo.save_report(start_date, end_date, report, entries)
 	return report, report_path

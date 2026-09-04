@@ -86,8 +86,8 @@ schema/function definido, não apenas texto de instrução solto.
 **Motivo:** Escolha do usuário para o MVP. Suporte nativo a `response_schema` facilita
 ADR-010 sem lógica adicional de parsing.
 **Implicação:** Segundo provedor (ex: OpenAI, Claude) deve ser adicionado apenas como
-novo adapter implementando a mesma interface — sem alterar `core/analysis.py` ou
-`core/report.py`.
+novo adapter implementando a mesma interface — sem alterar os casos de uso ou o
+domínio.
 
 ## ADR-012: Uso mínimo de plugins de terceiros no Obsidian
 **Data:** 2026-09-03

@@ -61,7 +61,7 @@ class FileSystemEntryRepository(EntryRepository):
 			if start <= entry_date <= end:
 				entries.append(entry)
 		if entries:
-			self._warn_if_existing_derived_outputs(start)
+			self._warn_if_existing_derived_outputs(start, end)
 		return entries
 
 	def save_analysis(self, entry: EntryData, analysis: AnalysisResult) -> Path:
@@ -97,11 +97,13 @@ class FileSystemEntryRepository(EntryRepository):
 		post.content = upsert_generated_section(post.content, section)
 		source_path.write_text(frontmatter.dumps(post), encoding="utf-8")
 
-	def _warn_if_existing_derived_outputs(self, start: date) -> None:
+	def _warn_if_existing_derived_outputs(self, start: date, end: date) -> None:
 		"""Emitir um aviso se existirem análises ou relatórios derivados pré-existentes para a data fornecida."""
-		analysis_dir = self._analysis_dir_for_date(start)
-		if analysis_dir.exists() and any(analysis_dir.glob("*.md")):
-			warnings.warn("Preexisting analyses or reports found; regenerating from raw diary notes.")
+		for month_start in _month_starts_in_range(start, end):
+			analysis_dir = self._analysis_dir_for_date(month_start)
+			if analysis_dir.exists() and any(analysis_dir.glob("*.md")):
+				warnings.warn("Preexisting analyses or reports found; regenerating from raw diary notes.")
+				return
 
 	def _analysis_path_for_date(self, entry_date: date) -> Path:
 		"""Retornar o caminho do arquivo de análise para a data fornecida."""
@@ -119,3 +121,17 @@ class FileSystemEntryRepository(EntryRepository):
 def _month_name(entry_date: date) -> str:
 	"""Retornar o nome do mês correspondente à data fornecida."""
 	return MONTH_NAMES[entry_date.month - 1]
+
+
+def _month_starts_in_range(start: date, end: date) -> list[date]:
+	"""Return the first day of each month covered by the inclusive date range."""
+	current = date(start.year, start.month, 1)
+	last = date(end.year, end.month, 1)
+	months: list[date] = []
+	while current <= last:
+		months.append(current)
+		if current.month == 12:
+			current = date(current.year + 1, 1, 1)
+		else:
+			current = date(current.year, current.month + 1, 1)
+	return months

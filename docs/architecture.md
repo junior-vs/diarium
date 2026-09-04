@@ -23,28 +23,40 @@ e geração de arquivos markdown de saída (análise individual e relatórios co
 
 ## 2. Componentes
 
-### 2.0 Estrutura de Projeto (core + CLI)
-O código é organizado separando lógica de negócio (`core/`) do ponto de entrada (`cli/`),
-preparando reuso futuro por mobile app e bot Telegram sem reescrever a lógica de análise
-(ver ADR-009).
+### 2.0 Estrutura de Projeto (`diarium_app` + CLI)
+O código é organizado separando domínio, portas, formatação, casos de uso, infraestrutura
+e ponto de entrada, preparando reuso futuro por mobile app e bot Telegram sem reescrever
+a lógica de análise.
 
 ```
-diarium/
-  core/
+diarium_app/
+  domain/
     models.py          # Pydantic: EntryData, AnalysisResult, HabitData
-    parser.py           # Leitura de markdown + front-matter (independente de LLM)
+    entry_date.py      # Resolução de datas da entrada
+  ports/
+    llm_adapter.py     # Interface abstrata LLMAdapter
+    entry_repository.py
+  formatters/
+    analysis_markdown.py
+    report_markdown.py
+    source_note.py
+  use_cases/
+    analyze_entry.py   # Orquestra análise individual
+    generate_period_report.py
+  infrastructure/
+    filesystem_entry_repository.py
     llm/
-      base.py           # Interface abstrata LLMAdapter
-      gemini_adapter.py # Implementação Gemini (JSON schema / function calling)
-    analysis.py        # Orquestra: parser + adapter → AnalysisResult
-    report.py          # Consolidação periódica (usa dados estruturados + LLM)
+      fake_adapter.py
+      gemini_adapter.py
+      prompt_loader.py
+      prompts/
   cli/
-    main.py             # Comandos `analisar` e `relatorio`, chama core/
-  config.py             # Carrega provedor/API key (env var / config file)
+    main.py            # Comandos `analisar` e `relatorio`, composition root
+  config.py            # Carrega provedor/API key (env var / config file)
 ```
 
-Regra: CLI (e futuramente o backend de mobile/bot) chama apenas `core/analysis.py` e
-`core/report.py`. Nenhum ponto de entrada deve chamar o `LLMAdapter` diretamente.
+Regra: CLI (e futuramente o backend de mobile/bot) chama apenas os casos de uso em
+`use_cases/`. Nenhum ponto de entrada deve chamar o `LLMAdapter` diretamente.
 
 ### 2.1 CLI
 Ponto de entrada. Comandos principais:
@@ -71,7 +83,7 @@ validada contra o schema Pydantic no boundary; resposta fora do schema falha de 
 explícita, não é aceita silenciosamente.
 
 Objetivo: trocar de provedor (ou migrar para modelo local) alterando apenas configuração
-e adicionando um novo adapter, sem tocar no core.
+e adicionando um novo adapter, sem tocar no domínio ou nos casos de uso.
 
 ### 2.4 Motor de Análise TCC
 Contém os prompts estruturados (ver `prompts.md`) enviados ao LLM Adapter, e o parsing
