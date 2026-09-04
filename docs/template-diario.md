@@ -1,7 +1,7 @@
 ---
 data: {{date}}
 tags: [diario]
-analisado: false
+processado: false
 mit: 
 sono: 
 estresse: 

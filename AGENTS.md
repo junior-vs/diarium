@@ -172,10 +172,10 @@ Respeite as fronteiras de versão descritas em [`docs/roadmap.md`](file:///e:/de
 ## 10. Referência da Documentação
 
 Para aprofundar qualquer tema, consulte os arquivos em `docs/`:
-- [`docs/specification.md`](file:///e:/develop/repos/misc/diarium/docs/specification.md) — Requisitos funcionais (RF01–RF10) e não-funcionais (RNF01–RNF05).
-- [`docs/architecture.md`](file:///e:/develop/repos/misc/diarium/docs/architecture.md) — Fluxo de dados, componentes e interfaces.
-- [`docs/decisions.md`](file:///e:/develop/repos/misc/diarium/docs/decisions.md) — ADRs detalhadas com contexto e justificativas.
-- [`docs/prompts.md`](file:///e:/develop/repos/misc/diarium/docs/prompts.md) — Biblioteca de prompts de escrita, análise e consolidação.
-- [`docs/obsidian-setup.md`](file:///e:/develop/repos/misc/diarium/docs/obsidian-setup.md) — Configuração do Obsidian e templates.
-- [`docs/roadmap.md`](file:///e:/develop/repos/misc/diarium/docs/roadmap.md) — Planejamento de versões.
-- [`docs/template-diario.md`](file:///e:/develop/repos/misc/diarium/docs/template-diario.md) — Template canônico da entrada diária.
+- [`docs/specification.md`](docs/specification.md) — Requisitos funcionais (RF01–RF10) e não-funcionais (RNF01–RNF05).
+- [`docs/architecture.md`](docs/architecture.md) — Fluxo de dados, componentes e interfaces.
+- [`docs/decisions.md`](docs/decisions.md) — ADRs detalhadas com contexto e justificativas.
+- [`docs/prompts.md`](docs/prompts.md) — Biblioteca de prompts de escrita, análise e consolidação.
+- [`docs/obsidian-setup.md`](docs/obsidian-setup.md) — Configuração do Obsidian e templates.
+- [`docs/roadmap.md`](docs/roadmap.md) — Planejamento de versões.
+- [`docs/template-diario.md`](docs/template-diario.md) — Template canônico da entrada diária.

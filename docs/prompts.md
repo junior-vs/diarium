@@ -19,6 +19,9 @@ alinhados ao template (ver `obsidian-setup.md`), pra reduzir carga cognitiva.
 Brain dump não tem prompt fixo — é espaço livre, sem estrutura, para externar pensamentos
 sem exigir organização.
 
+Os textos de prompt são tratados como ativos de fonte versionados separadamente da
+implementação, então mudanças neles devem ser revisadas como mudanças de comportamento.
+
 ## 2. Prompt de Análise (enviado ao LLM)
 
 ```
@@ -49,6 +52,9 @@ Faça o seguinte:
    Se a seção estiver vazia, não force essa estrutura — é opcional.
 3. Não faça diagnósticos clínicos. Não substitua avaliação profissional.
 4. Seja objetivo e evite linguagem alarmista.
+
+Se a resposta não puder ser representada no schema esperado, falhe explicitamente em vez
+de tentar preservar apenas parte do conteúdo.
 ```
 
 ## 3. Prompt de Consolidação (relatório periódico)

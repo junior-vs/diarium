@@ -23,6 +23,7 @@ aproveitável pelo psicólogo do usuário.
   - Relatório periódico consolidado (padrões recorrentes, evolução, distorções mais frequentes, correlação entre hábitos e humor/estresse).
 - Prompts guiados fixos para orientar o registro (biblioteca de prompts TCC), divididos em blocos manhã/noite.
 - Template de diário com front-matter estruturado para tracking de hábitos (sono, energia, estresse, hidratação, sol, atividade física, leitura, estudo, MIT).
+- Status canônico da entrada diária: `processado`.
 
 ### Fora do escopo (v1)
 - Automação/watch de pasta.

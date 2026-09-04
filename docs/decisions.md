@@ -95,3 +95,40 @@ novo adapter implementando a mesma interface — sem alterar `core/analysis.py` 
 Search, Backlinks), evitando Dataview, Templater e afins.
 **Motivo:** Processamento e agregação de dados ficam no CLI externo; o Obsidian atua
 apenas como editor/visualizador. Reduz superfície de dependência e manutenção.
+
+## ADR-013: Status da entrada e atualizações determinísticas por append
+**Data:** 2026-09-03
+**Decisão:** O status canônico da nota diária passa a ser `processado`. Ao atualizar notas
+ou saídas geradas, o sistema deve preservar o conteúdo existente e anexar novas seções
+determinísticas no fim do arquivo, em vez de reescrever o documento inteiro.
+**Motivo:** O status deve refletir claramente a etapa concluída do fluxo, e o append-only
+reduz risco de perda de conteúdo autoral ao registrar novas análises ou notas geradas.
+
+## ADR-014: Layout canônico do vault por ano e mês
+**Data:** 2026-09-03
+**Decisão:** O layout canônico do vault passa a ser `diary/YYYY/MMMM` para notas diárias e
+`analyses/YYYY/MMMM` para análises e relatórios.
+**Motivo:** A organização por ano e nome do mês facilita navegação manual no Obsidian,
+mantém os arquivos agrupados por período e simplifica a filtragem do CLI por intervalo.
+
+## ADR-015: Relatórios e análises a partir das notas brutas
+**Data:** 2026-09-03
+**Decisão:** O CLI deve usar as notas brutas como fonte de verdade para gerar análises e
+relatórios. Ao encontrar saídas pré-existentes, deve avisar o usuário e regenerar o conteúdo
+a partir das notas de origem, em vez de depender das saídas antigas como base principal.
+**Motivo:** Evita acúmulo de resultados derivados como fonte secundária e garante que a
+consolidação reflita a versão mais recente das entradas do diário.
+
+## ADR-016: Prompts como ativos de código versionados separadamente
+**Data:** 2026-09-03
+**Decisão:** Os prompts deixam de ser tratados como texto narrativo genérico de documentação e
+passam a ser considerados ativos de fonte, versionados separadamente da implementação.
+**Motivo:** Mudanças de prompt são parte do comportamento do sistema e precisam ficar
+auditáveis sem se misturar a refatorações de código.
+
+## ADR-017: Adapter primeiro com implementação fake para testes
+**Data:** 2026-09-03
+**Decisão:** A primeira etapa de integração do LLM deve priorizar o adapter com uma
+implementação fake/mock para testes, antes de conectar o provedor real.
+**Motivo:** Permite validar parser, análise e relatório sem depender de API externa, reduzindo
+custo e ruído durante a construção do core.

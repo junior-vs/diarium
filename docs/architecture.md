@@ -36,11 +36,11 @@ diarium/
     llm/
       base.py           # Interface abstrata LLMAdapter
       gemini_adapter.py # Implementação Gemini (JSON schema / function calling)
-    analysis.py          # Orquestra: parser + adapter → AnalysisResult
-    report.py            # Consolidação periódica (usa dados estruturados + LLM)
+    analysis.py        # Orquestra: parser + adapter → AnalysisResult
+    report.py          # Consolidação periódica (usa dados estruturados + LLM)
   cli/
     main.py             # Comandos `analisar` e `relatorio`, chama core/
-  config.py              # Carrega provedor/API key (env var / config file)
+  config.py             # Carrega provedor/API key (env var / config file)
 ```
 
 Regra: CLI (e futuramente o backend de mobile/bot) chama apenas `core/analysis.py` e
@@ -78,9 +78,11 @@ Contém os prompts estruturados (ver `prompts.md`) enviados ao LLM Adapter, e o 
 da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo).
 
 ### 2.5 Gerador de Saída
-- **Análise individual:** gera um novo arquivo markdown vinculado à entrada original.
-- **Relatório consolidado:** agrega análises de um intervalo, identifica padrões recorrentes,
-  gera markdown único.
+- **Análise individual:** gera um novo arquivo markdown vinculado à entrada original e,
+  quando configurado, pode anexar uma seção determinística na nota de origem sem
+  sobrescrever o conteúdo existente.
+- **Relatório consolidado:** agrega as notas brutas de um intervalo, identifica padrões
+  recorrentes, gera markdown único e respeita o layout canônico `analyses/YYYY/MMMM`.
 
 ## 3. Fluxo de Dados
 
@@ -94,7 +96,9 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 
 ### Relatório consolidado
 1. Usuário roda `relatorio --de X --ate Y`.
-2. CLI localiza análises individuais já geradas no intervalo (ou entradas brutas, se ainda não analisadas).
+2. CLI localiza as notas brutas do intervalo como fonte de verdade. Se houver análises ou
+  relatórios pré-existentes, o usuário é avisado e o conteúdo é regenerado a partir das
+  entradas originais.
 3. Motor de Análise monta prompt de consolidação.
 4. LLM Adapter processa.
 5. Gerador de Saída escreve relatório único.
