@@ -17,6 +17,9 @@ def build_analysis_markdown(entry: EntryData, analysis: AnalysisResult) -> str:
 		"data": entry_date.isoformat(),
 		"tags": ["analise-tcc"],
 		"entrada_origem": f"[[{entry_date.isoformat()}]]",
+		# Permite reconstruir o AnalysisResult sem chamar o LLM novamente (ver
+		# FileSystemEntryRepository.find_existing_analysis).
+		"analysis_json": analysis.model_dump(mode="json"),
 	}
 	sections = [
 		"## Análise",

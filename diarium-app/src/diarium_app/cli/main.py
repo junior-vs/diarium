@@ -19,7 +19,7 @@ def analisar(
 	provider: str | None = typer.Option(None, help="Override llm provider"),
 	api_key: str | None = typer.Option(None, help="Override llm api key"),
 	model: str | None = typer.Option(None, help="Override llm model"),
-	vault_path: Path | None = typer.Option(None, help="Override vault path"),
+	vault_path: Path | None = typer.Option(None, help="Override vault path"),  # noqa: B008
 ) -> None:
 	"""Analyze a single diary entry using the specified LLM provider and repository."""
 	settings = _load_overrides(provider, api_key, model, vault_path)
@@ -36,7 +36,8 @@ def relatorio(
 	provider: str | None = typer.Option(None, help="Override llm provider"),
 	api_key: str | None = typer.Option(None, help="Override llm api key"),
 	model: str | None = typer.Option(None, help="Override llm model"),
-	vault_path: Path | None = typer.Option(None, help="Override vault path"),
+	vault_path: Path | None = typer.Option(None, help="Override vault path"),  # noqa: B008
+	forcar: bool = typer.Option(False, "--forcar", help="Recompute analyses even if already persisted"),
 ) -> None:
 	"""Generate a consolidated report for a specified period using the specified LLM provider and repository."""
 	settings = _load_overrides(provider, api_key, model, vault_path)
@@ -44,7 +45,7 @@ def relatorio(
 	repo = FileSystemEntryRepository(settings.vault_path)
 	start_date = date.fromisoformat(de)
 	end_date = date.fromisoformat(ate)
-	_, report_path = generate_period_report(llm, repo, start_date, end_date)
+	_, report_path = generate_period_report(llm, repo, start_date, end_date, force_recompute=forcar)
 	typer.echo(str(report_path))
 
 

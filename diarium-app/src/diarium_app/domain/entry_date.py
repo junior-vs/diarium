@@ -27,6 +27,6 @@ def _infer_date_from_path(path_value: str) -> date | None:
 	if not match:
 		return None
 	try:
-		return datetime.strptime(match.group(0), "%Y-%m-%d").date()
+		return datetime.strptime(match.group(0), "%Y-%m-%d").date()  # noqa: DTZ007 (só .date() é usado)
 	except ValueError:
 		return None

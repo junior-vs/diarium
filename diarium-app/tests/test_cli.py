@@ -10,7 +10,7 @@ runner = CliRunner()
 
 
 def _write_diary(tmp_path: Path) -> Path:
-	month_dir = tmp_path / "diary" / "2026" / "September"
+	month_dir = tmp_path / "diary" / "2026" / "09"
 	month_dir.mkdir(parents=True, exist_ok=True)
 	path = month_dir / "2026-09-03.md"
 	path.write_text(
@@ -51,7 +51,7 @@ def test_cli_analisar_and_relatorio(tmp_path: Path) -> None:
 		],
 	)
 	assert analysis_result.exit_code == 0, analysis_result.stdout
-	assert (tmp_path / "analyses" / "2026" / "September" / "2026-09-03-analise.md").exists()
+	assert (tmp_path / "analyses" / "2026" / "09" / "2026-09-03-analise.md").exists()
 
 	report_result = runner.invoke(
 		app,
@@ -68,4 +68,4 @@ def test_cli_analisar_and_relatorio(tmp_path: Path) -> None:
 		],
 	)
 	assert report_result.exit_code == 0, report_result.stdout
-	assert (tmp_path / "analyses" / "2026" / "September" / "2026-09-relatorio.md").exists()
+	assert (tmp_path / "analyses" / "2026" / "09" / "2026-09-relatorio.md").exists()

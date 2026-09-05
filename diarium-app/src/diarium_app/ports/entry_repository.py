@@ -17,6 +17,10 @@ class EntryRepository(ABC):
 		"""Retornar todas as entradas do diário cuja data esteja dentro de [start, end]."""
 
 	@abstractmethod
+	def find_existing_analysis(self, entry: EntryData) -> AnalysisResult | None:
+		"""Retornar uma análise já persistida para a entrada, se existir."""
+
+	@abstractmethod
 	def save_analysis(self, entry: EntryData, analysis: AnalysisResult) -> Path:
 		"""Persistir a análise de uma única entrada e retornar seu caminho."""
 

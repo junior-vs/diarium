@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from datetime import date
 from pathlib import Path
 from typing import cast
@@ -14,20 +13,13 @@ from ..formatters.report_markdown import build_report_markdown
 from ..formatters.source_note import build_source_note_section, upsert_generated_section
 from ..ports.entry_repository import EntryRepository
 
-MONTH_NAMES = (
-	"January", "February", "March", "April", "May", "June",
-	"July", "August", "September", "October", "November", "December",
-)
-
 
 class FileSystemEntryRepository(EntryRepository):
-	
 	def __init__(self, vault_path: str | Path) -> None:
 		self._vault_path = Path(vault_path)
 
 	def load_entry(self, path: str | Path) -> EntryData:
 		"""Carregar uma entrada de diário a partir de um arquivo Markdown com frontmatter."""
-		
 		post = frontmatter.load(str(path))
 		metadata = post.metadata
 		habit_data = HabitData(
@@ -49,24 +41,44 @@ class FileSystemEntryRepository(EntryRepository):
 		)
 
 	def list_entries_in_range(self, start: date, end: date) -> list[EntryData]:
-		"""Listar todas as entradas de diário dentro de um intervalo de datas."""
-		
+		"""Listar todas as entradas de diário dentro de um intervalo de datas, em ordem cronológica."""
 		diary_root = self._vault_path / "diary"
 		entries: list[EntryData] = []
-		for path in sorted(diary_root.rglob("*.md")):
+		for path in diary_root.rglob("*.md"):
 			entry = self.load_entry(path)
 			entry_date = resolve_entry_date(entry)
 			if entry_date is None:
 				continue
 			if start <= entry_date <= end:
 				entries.append(entry)
-		if entries:
-			self._warn_if_existing_derived_outputs(start, end)
+		# Ordena pela data resolvida (não pelo path) para garantir ordem
+		# cronológica independente da convenção de pastas do vault. Neste ponto
+		# todas as entradas já passaram pelo filtro de data resolvível acima,
+		# então require_entry_date nunca lança e o tipo fica (EntryData) -> date.
+		entries.sort(key=require_entry_date)
 		return entries
+
+	def find_existing_analysis(self, entry: EntryData) -> AnalysisResult | None:
+		"""Retornar a análise já persistida para a entrada, se existir e for reconstruível."""
+		entry_date = resolve_entry_date(entry)
+		if entry_date is None:
+			return None
+		path = self._analysis_path_for_date(entry_date)
+		if not path.exists():
+			return None
+		post = frontmatter.load(str(path))
+		raw_analysis = post.metadata.get("analysis_json")
+		if raw_analysis is None:
+			return None
+		try:
+			return AnalysisResult.model_validate(raw_analysis)
+		except Exception:  # noqa: BLE001 - defensive boundary de dado persistido, ver comentário abaixo
+			# Arquivo de análise presente mas sem payload reconstruível
+			# (ex.: editado manualmente, ou gerado por uma versão anterior).
+			return None
 
 	def save_analysis(self, entry: EntryData, analysis: AnalysisResult) -> Path:
 		"""Salvar a análise de uma entrada de diário e retornar o caminho do arquivo gerado."""
-		
 		entry_date = require_entry_date(entry)
 		path = self._analysis_path_for_date(entry_date)
 		path.parent.mkdir(parents=True, exist_ok=True)
@@ -97,14 +109,6 @@ class FileSystemEntryRepository(EntryRepository):
 		post.content = upsert_generated_section(post.content, section)
 		source_path.write_text(frontmatter.dumps(post), encoding="utf-8")
 
-	def _warn_if_existing_derived_outputs(self, start: date, end: date) -> None:
-		"""Emitir um aviso se existirem análises ou relatórios derivados pré-existentes para a data fornecida."""
-		for month_start in _month_starts_in_range(start, end):
-			analysis_dir = self._analysis_dir_for_date(month_start)
-			if analysis_dir.exists() and any(analysis_dir.glob("*.md")):
-				warnings.warn("Preexisting analyses or reports found; regenerating from raw diary notes.")
-				return
-
 	def _analysis_path_for_date(self, entry_date: date) -> Path:
 		"""Retornar o caminho do arquivo de análise para a data fornecida."""
 		return self._analysis_dir_for_date(entry_date) / f"{entry_date.isoformat()}-analise.md"
@@ -114,24 +118,5 @@ class FileSystemEntryRepository(EntryRepository):
 		return self._analysis_dir_for_date(entry_date) / f"{entry_date.year:04d}-{entry_date.month:02d}-relatorio.md"
 
 	def _analysis_dir_for_date(self, entry_date: date) -> Path:
-		"""Retornar o diretório de análises para a data fornecida."""
-		return self._vault_path / "analyses" / f"{entry_date.year:04d}" / _month_name(entry_date)
-
-
-def _month_name(entry_date: date) -> str:
-	"""Retornar o nome do mês correspondente à data fornecida."""
-	return MONTH_NAMES[entry_date.month - 1]
-
-
-def _month_starts_in_range(start: date, end: date) -> list[date]:
-	"""Return the first day of each month covered by the inclusive date range."""
-	current = date(start.year, start.month, 1)
-	last = date(end.year, end.month, 1)
-	months: list[date] = []
-	while current <= last:
-		months.append(current)
-		if current.month == 12:
-			current = date(current.year + 1, 1, 1)
-		else:
-			current = date(current.year, current.month + 1, 1)
-	return months
+		"""Retornar o diretório de análises para a data fornecida: analyses/AAAA/MM."""
+		return self._vault_path / "analyses" / f"{entry_date.year:04d}" / f"{entry_date.month:02d}"
