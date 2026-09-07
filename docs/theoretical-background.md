@@ -2,29 +2,166 @@
 
 ### 1. Terapia Cognitivo-Comportamental (TCC) — princípios centrais
 
-A TCC parte da premissa de que não são os eventos em si que geram sofrimento emocional, mas a **interpretação** que fazemos deles. Esse é o núcleo do modelo cognitivo de Aaron Beck (anos 1960-70) e da Terapia Racional Emotiva de Albert Ellis, que deu origem ao modelo **ABC**:
+A Terapia Cognitivo-Comportamental (TCC) compreende o sofrimento psicológico a partir da interação entre situações, interpretações, emoções, respostas fisiológicas e comportamentos. Um princípio central do modelo cognitivo é que a maneira como uma pessoa interpreta e avalia uma situação influencia suas respostas emocionais e comportamentais. Essas interpretações, por sua vez, são influenciadas por crenças e esquemas cognitivos mais amplos, além das características da própria situação e da história de aprendizagem da pessoa (Beck et al., 1979; Beck, 2020; Knapp & Beck, 2008).
 
-- **A (Activating Event)** — o evento ativador, a situação objetiva.
-- **B (Belief)** — a crença ou pensamento automático sobre o evento.
-- **C (Consequence)** — a consequência emocional e comportamental.
+Isso não significa que os acontecimentos externos sejam irrelevantes ou que todo sofrimento possa ser explicado exclusivamente pela forma de pensar. Situações objetivamente adversas podem produzir sofrimento significativo. A contribuição do modelo cognitivo está em investigar como a pessoa atribui significado ao acontecimento e como esse significado participa da resposta emocional e comportamental.
 
-Ellis expandiu o modelo para **ABCDE**, adicionando:
-- **D (Dispute)** — o questionamento ativo da crença disfuncional (evidências a favor/contra).
-- **E (Effect)** — o novo efeito emocional/comportamental resultante da crença revisada.
+Na terapia cognitiva de Aaron Beck, os pensamentos automáticos são interpretações que surgem de maneira relativamente espontânea diante de situações específicas. Eles podem estar associados a emoções e comportamentos e são influenciados por crenças intermediárias e crenças nucleares. O processo terapêutico pode envolver a identificação desses pensamentos, a avaliação das evidências que os sustentam ou contradizem e a construção de interpretações alternativas mais equilibradas e contextualizadas (Beck, 2020; Knapp & Beck, 2008).
 
-O pressuposto clínico é que a crença (B), não o evento (A), é o alvo de intervenção — e que ela pode ser identificada, questionada e substituída. É esse pressuposto que justifica pedir ao usuário (ou ao LLM) para separar "o que aconteceu" de "o que pensei sobre isso".
+O projeto também utiliza o modelo ABC associado à Terapia Racional Emotivo-Comportamental (REBT), desenvolvida por Albert Ellis, como uma estrutura complementar para organizar registros:
 
-### 2. Questionamento socrático e o mecanismo de mudança em D
+* **A (Activating Event)** — acontecimento ou situação ativadora;
+* **B (Belief)** — avaliação, interpretação ou crença da pessoa diante do acontecimento;
+* **C (Consequence)** — consequências emocionais e comportamentais associadas à avaliação.
 
-O "D" (Dispute) do ABCDE é frequentemente mal-entendido como o terapeuta (ou, neste projeto, o LLM) apresentando um contra-argumento pronto para a crença disfuncional. Clinicamente, isso inverte o mecanismo que faz o D funcionar.
+Posteriormente, a REBT desenvolveu extensões desse modelo, incluindo o ABCDE, no qual o processo de investigação e contestação de crenças é seguido pela consideração de novos efeitos ou consequências. Esse modelo pertence à tradição de Ellis e não deve ser tratado como equivalente ao modelo cognitivo originalmente desenvolvido por Beck.
 
-**Guided discovery vs. persuasão didática:** Padesky (1993), em texto seminal sobre questionamento socrático em TCC, distingue perguntas que guiam a descoberta do próprio cliente (informativas, de escuta empática, de síntese, e por fim perguntas analíticas que levam a uma nova conclusão) de perguntas retóricas que já embutem a resposta certa. Beck descreve o mesmo princípio como **empirismo colaborativo** — terapeuta e cliente como coinvestigadores testando uma hipótese, não o terapeuta como autoridade que corrige o pensamento do cliente.
+No Diarium, o modelo ABC é utilizado principalmente como uma estrutura de organização do registro, enquanto conceitos da terapia cognitiva de Beck são utilizados para analisar pensamentos automáticos, crenças intermediárias, crenças nucleares e padrões cognitivos. Essa distinção é importante porque as duas tradições fazem parte do campo cognitivo-comportamental, mas possuem modelos conceituais e terminologias próprias.
 
-**Por que a auto-geração importa (evidência fora da clínica):** o efeito de auto-geração (Slamecka & Graf, 1978), da psicologia cognitiva, mostra que informação gerada pela própria pessoa é retida e integrada de forma mais duradoura do que informação apresentada por terceiros — mesmo quando o conteúdo final é idêntico. Aplicado ao D: uma alternativa de pensamento que o próprio usuário constrói (respondendo a "qual evidência sustenta isso?", "o que eu diria a um amigo na mesma situação?") tem mais chance de se manter do que uma frase de reasseguramento entregue pronta, ainda que bem escrita.
+A separação entre o acontecimento e sua interpretação possui uma função prática no sistema. O usuário é convidado a distinguir, tanto quanto possível, **o que ocorreu**, **como interpretou o ocorrido** e **quais respostas emocionais e comportamentais surgiram a partir dessa interpretação**. Essa estrutura não pressupõe que a interpretação esteja necessariamente errada. O objetivo é torná-la explícita para que possa ser examinada à luz das evidências, do contexto e de perspectivas alternativas.
 
-**Risco clínico do "D automático":** um sistema que resolve o D unilateralmente corre dois riscos. Primeiro, infantiliza o processo — o "aha" que sustenta a mudança de crença vem do esforço de encontrar a evidência, não de recebê-la. Segundo, arrisca invalidação: uma resposta genérica pode não caber no raciocínio real da pessoa, e ferramentas automatizadas de TCC já são criticadas por esse tipo de superficialidade (ver seção 9, sobre limites do LLM).
+A finalidade dessa investigação não é substituir um pensamento negativo por um pensamento positivo, nem fazer com que o sistema determine qual interpretação é correta. Em consonância com o princípio do empirismo colaborativo da TCC, o objetivo é favorecer uma análise baseada em evidências, na qual diferentes interpretações possam ser examinadas e testadas de maneira proporcional ao contexto.
 
-**Implicação para o projeto:** a saída do LLM para o campo D não deveria ser uma resposta finalizada, mas 2-3 perguntas abertas — deixando o preenchimento como parte do processo do próprio usuário (ver `prompts.md`). Isso também preserva, como dado bruto para a sessão de terapia, o ponto exato onde a pessoa ficou presa — informação mais valiosa clinicamente do que uma resposta já resolvida.
+Para o Diarium, essa distinção estabelece um princípio de design fundamental: o sistema deve funcionar prioritariamente como uma ferramenta de **estruturação da auto-observação e investigação cognitiva**, e não como uma autoridade que determina quais pensamentos ou interpretações o usuário deve adotar. O LLM pode auxiliar na organização do relato, na identificação de possíveis elementos cognitivos e na formulação de perguntas investigativas, mas não deve presumir que conhece a interpretação correta de uma situação nem realizar, por conta própria, uma formulação clínica completa.
+
+**Referências principais:** Beck et al. (1979); Beck (2020); Knapp & Beck (2008).
+
+### 2. Questionamento socrático e descoberta guiada
+
+O questionamento socrático ocupa um papel importante na tradição cognitivo-comportamental, especialmente como parte do processo de **descoberta guiada**. Seu objetivo não é simplesmente convencer a pessoa de que determinado pensamento está errado, mas ajudá-la a examinar suas próprias interpretações, recuperar informações relevantes e construir uma compreensão mais ampla da situação.
+
+É importante distinguir esse procedimento do **D (Dispute)** do modelo ABCDE da Terapia Racional Emotivo-Comportamental (REBT), desenvolvida por Albert Ellis. Na REBT, o D representa a investigação e contestação de crenças consideradas irracionais, enquanto o questionamento socrático desenvolvido na tradição cognitiva de Beck e posteriormente sistematizado por autores como Christine Padesky enfatiza a descoberta guiada por meio de perguntas, reflexão e exame conjunto das evidências (Ellis, 1994; Padesky, 1993).
+
+Embora as duas abordagens pertençam ao campo cognitivo-comportamental e possam compartilhar algumas estratégias de investigação, elas não devem ser tratadas como equivalentes. No Diarium, o modelo ABC pode ser utilizado como estrutura de organização do registro, enquanto o questionamento socrático é utilizado como princípio para formular perguntas que favoreçam a investigação da experiência relatada.
+
+#### 2.1 Da contestação à investigação
+
+Na TCC contemporânea, o exame de pensamentos automáticos não pressupõe que eles sejam necessariamente falsos. Um pensamento pode ser preciso, parcialmente preciso ou impreciso. A função da investigação é avaliar sua validade, utilidade e relação com o contexto.
+
+Por exemplo, diante do pensamento:
+
+> “Vou fracassar nessa apresentação.”
+
+o objetivo não deve ser substituí-lo automaticamente por:
+
+> “Eu vou conseguir.”
+
+As duas afirmações podem ser igualmente especulativas.
+
+Uma abordagem cognitivo-comportamental mais consistente seria investigar:
+
+* O que faz você acreditar que irá fracassar?
+* Que evidências apoiam essa previsão?
+* Que evidências apontam para resultados diferentes?
+* Já houve situações semelhantes? O que aconteceu?
+* O que você está considerando como “fracasso”?
+* Existe algum resultado intermediário entre sucesso total e fracasso total?
+* Se o resultado não for o esperado, quais seriam as possibilidades de lidar com isso?
+
+Essas perguntas não determinam previamente a conclusão. Elas ampliam o conjunto de informações disponível para que a própria pessoa possa avaliar sua interpretação.
+
+Esse princípio é coerente com o conceito de **empirismo colaborativo**, no qual terapeuta e paciente trabalham conjuntamente para examinar pensamentos, emoções e comportamentos e testar hipóteses sobre eles. A TCC contemporânea enfatiza a colaboração e a descoberta guiada, em vez de o terapeuta assumir a posição de autoridade que simplesmente informa ao paciente quais pensamentos estão corretos ou incorretos (Beck, 2020).
+
+#### 2.2 Perguntas socráticas como ferramenta de descoberta
+
+Padesky (1993) descreve o questionamento socrático como uma forma de facilitar descobertas úteis. Seu trabalho destaca que perguntas eficazes dependem do contexto e que perguntas genéricas, isoladamente, não são suficientes para reproduzir um diálogo socrático de qualidade.
+
+Uma pergunta socrática adequada deve, portanto, estar relacionada ao material fornecido pela própria pessoa e contribuir para a investigação de uma questão relevante.
+
+No contexto do Diarium, isso implica que as perguntas geradas pelo sistema devem ser **contextuais, abertas e epistemicamente neutras** sempre que possível. O sistema não deve inserir na pergunta uma conclusão que ainda não foi demonstrada.
+
+Compare:
+
+**Formulação indutiva:**
+
+> “Você percebe que está catastrofizando essa situação?”
+
+com:
+
+**Formulação investigativa:**
+
+> “Quando você imagina o pior resultado possível, quão provável ele parece e quais evidências sustentam essa previsão?”
+
+A segunda formulação permite que a hipótese seja examinada em vez de presumida.
+
+#### 2.3 Pensamentos automáticos não são necessariamente erros
+
+O Diarium deve distinguir entre **identificação de um pensamento automático** e **avaliação de sua validade**.
+
+Um pensamento automático é uma cognição que pode surgir de maneira relativamente espontânea diante de determinada situação. Sua identificação não implica que ele seja irracional, disfuncional ou uma distorção cognitiva.
+
+A sequência conceitual mais adequada é:
+
+1. identificar a situação;
+2. identificar a interpretação ou pensamento automático;
+3. identificar emoções e respostas associadas;
+4. examinar as evidências relevantes;
+5. considerar interpretações alternativas quando apropriado;
+6. avaliar as consequências das diferentes interpretações;
+7. testar a hipótese por meio de comportamento ou observação quando isso for apropriado.
+
+Essa sequência evita transformar a TCC em um processo de substituição automática de pensamentos negativos por pensamentos positivos.
+
+O objetivo é desenvolver uma avaliação mais **precisa, equilibrada, contextualizada e funcional**, e não necessariamente mais otimista.
+
+#### 2.4 O papel das crenças
+
+Pensamentos automáticos podem estar relacionados a crenças intermediárias e crenças nucleares. Entretanto, esses níveis não devem ser tratados como se fossem simplesmente diferentes nomes para o mesmo fenômeno.
+
+De forma simplificada, um pensamento automático pode representar uma interpretação específica de uma situação, enquanto crenças intermediárias e crenças nucleares representam estruturas cognitivas mais amplas que podem influenciar a interpretação de diferentes situações.
+
+Por exemplo:
+
+> **Situação:** um colega não responde a uma mensagem.
+
+> **Pensamento automático:** “Ele está me ignorando.”
+
+> **Crença intermediária:** “Se alguém não responde, significa que não está interessado em mim.”
+
+> **Possível crença nuclear:** “Eu não sou importante para as pessoas.”
+
+Essa organização é uma ferramenta de formulação, e não uma sequência que necessariamente aparecerá dessa maneira em todos os casos.
+
+O Diarium deve, portanto, evitar inferir automaticamente uma crença nuclear a partir de um único pensamento automático. A identificação de níveis mais profundos de cognição exige contexto suficiente e deve ser tratada como hipótese.
+
+#### 2.5 Implicações para o Diarium
+
+A partir desses princípios, o papel do sistema pode ser definido como **facilitador de investigação cognitiva**, e não como corretor de pensamentos.
+
+O LLM pode:
+
+* ajudar a separar situação, interpretação, emoção e comportamento;
+* sugerir perguntas para examinar evidências;
+* ajudar a identificar possíveis interpretações alternativas;
+* apontar padrões recorrentes no material fornecido pelo usuário;
+* apresentar uma hipótese de padrão cognitivo de maneira provisória;
+* auxiliar na preparação de experimentos ou observações comportamentais quando apropriado.
+
+O LLM não deve:
+
+* determinar automaticamente que um pensamento é falso;
+* substituir um pensamento por outro considerado “correto”;
+* presumir que uma interpretação alternativa é necessariamente melhor;
+* inferir uma crença nuclear com base em evidência insuficiente;
+* apresentar uma hipótese cognitiva como diagnóstico ou conclusão clínica.
+
+Uma formulação adequada para o sistema é:
+
+> **“Investigue primeiro, conclua depois.”**
+
+Essa orientação é particularmente importante porque um modelo de linguagem pode produzir perguntas linguisticamente convincentes mesmo quando sua interpretação do relato está equivocada. A qualidade da pergunta não garante a validade da hipótese que a originou.
+
+Por esse motivo, as interpretações produzidas pelo sistema devem ser apresentadas como **hipóteses para reflexão**, e não como avaliações clínicas.
+
+### Referências principais
+
+* Beck, A. T., Rush, A. J., Shaw, B. F., & Emery, G. (1979). *Cognitive Therapy of Depression*. Guilford Press.
+* Beck, J. S. (2020). *Cognitive Behavior Therapy: Basics and Beyond* (3rd ed.). Guilford Press.
+* Ellis, A. (1994). *Reason and Emotion in Psychotherapy: Revised and Updated*. Carol Publishing Group.
+* Knapp, P., & Beck, A. T. (2008). Fundamentos, modelos conceituais, aplicações e pesquisa da terapia cognitiva. *Revista Brasileira de Psiquiatria, 30*(suppl. 2), s54–s64.
+* Padesky, C. A. (1993). *Socratic Questioning: Changing Minds or Guiding Discovery?* Keynote address presented at the European Congress of Behavioural and Cognitive Therapies.
+* Padesky, C. A. (2019). *Action, Dialogue & Discovery: Reflections on Socratic Questioning 25 Years Later*.
+* Kazantzis, N., Fairburn, C. G., Padesky, C. A., & Reinecke, M. (2014). Unresolved issues regarding the research and practice of cognitive behavior therapy: The case of guided discovery using Socratic questioning. *Behaviour Change, 31*(1), 1–17.
 
 ### 3. O componente comportamental — o elo que falta na reestruturação cognitiva
 

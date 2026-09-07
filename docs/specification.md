@@ -11,6 +11,7 @@ aproveitável pelo psicólogo do usuário.
 - Identificar automaticamente distorções cognitivas nos registros, quando presentes.
 - Estruturar entradas livres no modelo ABC/ABCDE quando aplicável (opcional, não obrigatório por entrada).
 - Rastrear hábitos e métricas de autorregulação (sono, energia, estresse, hidratação, etc.) de forma estruturada.
+- Registrar ativação comportamental (atividades realizadas e prazer/domínio percebido) e contra-evidências de crenças negativas (positive data log), complementando o registro de distorções.
 - Gerar relatórios periódicos consolidados para acompanhamento (próprio e/ou terapêutico).
 
 ## 3. Escopo
@@ -22,7 +23,8 @@ aproveitável pelo psicólogo do usuário.
   - Arquivo markdown de análise por entrada (distorções identificadas, estrutura ABC/ABCDE sugerida quando aplicável).
   - Relatório periódico consolidado (padrões recorrentes, evolução, distorções mais frequentes, correlação entre hábitos e humor/estresse).
 - Prompts guiados fixos para orientar o registro (biblioteca de prompts TCC), divididos em blocos manhã/noite.
-- Template de diário com front-matter estruturado para tracking de hábitos (sono, energia, estresse, hidratação, sol, atividade física, leitura, estudo, MIT).
+- Template de diário com front-matter estruturado para tracking de hábitos (sono, energia, estresse, hidratação, sol, atividade física, leitura, estudo, MIT, atividades realizadas + prazer/domínio percebido).
+- Bloco opcional de Positive Data Log, espelhando o padrão do Registro de Gatilho (baixa fricção, repetível, não obrigatório).
 - Status canônico da entrada diária: `processado`.
 
 ### Fora do escopo (v1)
