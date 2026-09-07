@@ -16,6 +16,8 @@
 - [ ] Exportação de relatório em formato adequado para compartilhar com psicólogo (ex: PDF).
 - [ ] Painel simples de visualização de tendências (opcional, fora do core CLI).
 - [ ] Possível interface web/mobile consumindo o mesmo core.
+- [ ] Investigar classificador de risco dedicado e validado clinicamente, complementando
+      a triagem atual baseada no LLM genérico (ver decisions.md ADR-022).
 
 ## Não planejado (fora de escopo indefinidamente)
 - Produto comercial multiusuário.

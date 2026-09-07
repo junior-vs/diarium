@@ -193,8 +193,7 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "obsidian-git:Open Git source control": false,
-      "zk-prefixer:Create new unique note": false
+      "obsidian-git:Open Git source control": false
     }
   },
   "active": "8f41c6ab4549b80b",

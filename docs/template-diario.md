@@ -35,8 +35,7 @@ estudo: false
 
 ---
 
-## 🎯 Registro de Gatilho (Opcional)
-<!-- Use apenas se sentir necessidade de processar uma emoção forte -->
-- **Evento:** 
-- **Pensamento:** 
-- **Emoção:**
+## 🎯 Registro de Gatilho
+<!-- Use quando sentir necessidade de processar uma emoção forte. Pode repetir
+     quantas vezes for preciso ao longo do dia — cada ocorrência é um bloco novo,
+     inserido via "Insert template" > gatilho-rapido (ver obsidian-setup.md §5). -->

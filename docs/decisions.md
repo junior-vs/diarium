@@ -132,3 +132,139 @@ auditáveis sem se misturar a refatorações de código.
 implementação fake/mock para testes, antes de conectar o provedor real.
 **Motivo:** Permite validar parser, análise e relatório sem depender de API externa, reduzindo
 custo e ruído durante a construção do core.
+
+## ADR-018: Bloco de gatilho repetível e timestampado
+**Data:** 2026-09-06
+**Decisão:** A seção "Registro de Gatilho" deixa de ser única e opcional por nota diária
+e passa a ser um bloco repetível, inserido com timestamp a qualquer momento do dia
+(via comando nativo "Insert template" do Obsidian, não pela criação da nota). A nota
+diária pode conter zero, um ou múltiplos blocos de gatilho, cada um com seu horário.
+**Motivo:** Entrevista de necessidade (JTBD) identificou que o gatilho de uso principal
+do sistema é a crise de ansiedade em si — não a reflexão noturna. Pensamento automático
+relatado horas depois sofre reconstrução retrospectiva e perde fidelidade clínica;
+capturar no calor do momento preserva o dado que tem valor terapêutico real. Uma seção
+única por dia não comporta múltiplas crises no mesmo dia nem preserva o horário de cada
+uma, informação necessária para correlação (RF10).
+**Implicação:** Estrutura interna do campo (Evento/Pensamento/Emoção) permanece igual —
+validado como suficiente mesmo em estado de crise. Muda apenas a cardinalidade (1→N por
+dia) e a necessidade de timestamp por ocorrência. Não introduz plugin novo nem automação
+(mantém ADR-002 e ADR-012): usa "Insert template" nativo com hotkey, aplicado com o
+cursor já posicionado na nota do dia em aberto.
+**Impacto em outros artefatos:**
+- `template-diario.md`: seção de gatilho vira exemplo de bloco repetível.
+- Novo `templates/gatilho-rapido.md`: template parcial para inserção pontual.
+- `prompts.md` §2: prompt de análise deve assumir N blocos de gatilho por entrada,
+  cada um estruturado em ABC/ABCDE independentemente.
+- `obsidian-setup.md`: documentar fluxo de "Insert template" + hotkey.
+**Alternativas consideradas:** Manter seção única e aceitar perda de granularidade —
+descartado por comprometer diretamente RF10 e o job principal identificado na entrevista.
+Nota separada por gatilho (fora da nota do dia) — descartado por fragmentar a fonte de
+verdade e complicar o parsing do CLI sem ganho claro sobre o append timestampado.
+
+## ADR-019: Campo "Comportamento" no bloco de gatilho
+**Data:** 2026-09-06
+**Decisão:** O bloco de gatilho (ver ADR-018) ganha um quarto campo, "Comportamento",
+registrando o que a pessoa fez ou evitou fazer em resposta ao evento/pensamento/emoção.
+Estrutura final do bloco: Evento, Pensamento, Emoção, Comportamento.
+**Motivo:** O modelo ABC de Ellis captura o eixo cognitivo-emocional mas deixa implícita
+a "consequência comportamental" — nunca é um campo preenchível, depende do LLM inferir
+de texto livre (se presente). A manutenção de ansiedade por reforço negativo (Mowrer,
+1960) e comportamentos de segurança (Salkovskis, 1991) — ver `theoretical-background.md`
+§2 — só é visível se o comportamento de resposta (evitação, checagem, busca de
+reasseguramento) for registrado explicitamente, não inferido. Sem esse dado, o sistema
+vê o "instantâneo" emocional mas não o ciclo que mantém o padrão ao longo do tempo.
+**Implicação:** Validado com o usuário que 4 campos ainda são aceitáveis em estado de
+crise (mesmo nível de fricção percebido dos 3 campos anteriores). Prompt de análise
+(`prompts.md` §2) e templates (`template-diario.md`, `templates/gatilho-rapido.md`)
+precisam refletir o campo adicional.
+**Nota terminológica:** este "Comportamento" não transforma o bloco no ABC funcional de
+Skinner (Antecedent-Behavior-Consequence) — os dois modelos coexistem na mesma entrada,
+mas descrevem coisas diferentes (crença vs. reforço). Ver `theoretical-background.md` §2
+para a distinção completa.
+**Alternativas consideradas:** Deixar o LLM inferir comportamento do texto livre do
+Evento/Pensamento — descartado por já ter sido a motivação de ADR-010 (dado estruturado
+> parseamento de texto livre) e por comportamento de segurança sutil raramente aparecer
+explícito em texto não solicitado.
+
+## ADR-020: Dispute (D) como perguntas socráticas, não resposta pronta
+**Data:** 2026-09-06
+**Decisão:** Por padrão, o LLM Adapter não resolve o campo D (Dispute) do ABCDE com uma
+resposta pronta. Em vez disso, gera de 2 a 3 perguntas socráticas abertas por bloco de
+gatilho, deixando o questionamento da crença como processo do próprio usuário. O campo
+E (Effect) permanece em aberto na análise automática, já que depende da resposta do
+usuário às perguntas de D, ainda inexistente no momento da análise. Uma variante que
+resolve D/E diretamente é mantida como opção de configuração não-padrão, não como
+comportamento default.
+**Motivo:** Evidência de questionamento socrático (Padesky, 1993) e empirismo
+colaborativo (Beck) mostra que o mecanismo terapêutico do D depende de a conclusão ser
+auto-gerada pelo cliente, não entregue por uma autoridade externa — reforçado pelo
+efeito de auto-geração (Slamecka & Graf, 1978) da psicologia cognitiva geral. Um D
+resolvido unilateralmente pelo LLM também apaga o dado clinicamente mais valioso pro
+psicólogo: o ponto exato onde a pessoa trava ao tentar questionar a própria crença.
+Ver `theoretical-background.md` §2.
+**Implicação:** `prompts.md` §2 reformulado — D vira geração de perguntas, não resposta;
+E fica em aberto. A resposta do usuário às perguntas (quando houver) fica registrada
+como nova entrada / bloco subsequente, não como parte da análise automática original.
+**Alternativas consideradas:** Manter D/E resolvidos automaticamente como padrão —
+descartado por contrariar o mecanismo de mudança que a própria técnica pretende ativar,
+e por reduzir o valor do dado levado à sessão de terapia (RF04, critério de sucesso do
+usuário identificado na entrevista JTBD).
+
+## ADR-021: Observação de tema recorrente em vez de rotulagem de schema
+**Data:** 2026-09-06
+**Decisão:** O relatório consolidado pode evidenciar que o mesmo conteúdo de crença
+aparece em situações/entradas superficialmente diferentes ao longo do período, mas o
+sistema não atribui esse padrão a um nome de schema de nenhuma taxonomia clínica (ex:
+os 18 Early Maladaptive Schemas de Young). A saída descreve o padrão observado em
+linguagem simples e o formula como pergunta aberta para reflexão do usuário — nunca
+como conclusão fechada ou rótulo.
+**Motivo:** Crença nuclear (schema) é normalmente acessada por técnica de diálogo
+iterativo (seta descendente, Burns 1980) e/ou instrumento validado de ~200 itens (Young
+Schema Questionnaire) interpretado clinicamente. Um LLM inferindo isso a partir de
+fragmentos de diário de algumas semanas, em análise batch (sem diálogo responsivo), faz
+um salto de validade sem lastro. Rotular alguém com um schema tem risco equivalente ou
+maior que um diagnóstico: pode ancorar prematuramente a autopercepção da pessoa a um
+rótulo impreciso. Ver `theoretical-background.md` §5.
+**Implicação:** `prompts.md` §3 (consolidação) ganha item de "tema recorrente", com
+instrução explícita de não nomear schema e de formular como pergunta, não afirmação.
+`specification.md` ganha RF11 registrando esse requisito e um risco correspondente na
+seção 7.
+**Alternativas consideradas:** Mapear diretamente para a taxonomia de Young (18
+schemas) — descartado por exigir instrumento validado que o projeto não usa, e por
+converter observação em rótulo clínico, contrariando a postura de não-diagnóstico já
+estabelecida no projeto (seção 9 de `theoretical-background.md`, AGENTS.md).
+
+## ADR-022: Triagem de risco separada da análise TCC, com resposta de segurança determinística
+**Data:** 2026-09-06
+**Decisão:** O `LLMAdapter` ganha um método dedicado de triagem de risco (ex:
+`screen_risk(text) -> RiskScreeningResult`), executado ANTES e independentemente de
+`analyze_entry`, para qualquer texto de entrada (incluindo cada bloco de gatilho
+isoladamente). O resultado é um campo estruturado e validado (enum `sem_indicio` /
+`possivel_risco`), nunca texto livre. Quando `possivel_risco` é retornado, o CLI insere
+deterministicamente — via código, não via saída do LLM — um bloco de segurança fixo e
+pré-revisado, com recursos de ajuda, no topo da análise gerada. A análise TCC da
+entrada continua rodando normalmente; o bloco de segurança é adicionado, não substitui
+a saída existente.
+**Motivo:** Ver `theoretical-background.md` §10. Misturar triagem de risco na mesma
+chamada que identifica distorções cognitivas expõe uma decisão de segurança à mesma
+fragilidade de texto livre já resolvida para o restante do sistema em ADR-010 — mas
+aqui uma falha silenciosa tem consequência mais grave. O conteúdo de resposta não deve
+ser gerado pelo LLM a cada chamada: precisa ser fixo, revisado previamente, e
+controlado pelo código, para garantir consistência e evitar respostas inadequadas ou
+alarmistas.
+**Implicação:**
+- Novo campo estruturado para o resultado de triagem (schema irmão de `AnalysisResult`,
+  validado via Pydantic, ver ADR-010).
+- Limiar de decisão deliberadamente conservador (favorece falso positivo sobre falso
+  negativo) — ver `theoretical-background.md` §10.
+- O bloco de segurança é conteúdo estático, versionado como ativo do projeto (mesmo
+  princípio de ADR-016 para prompts) — ver `bloco-seguranca.md`.
+- `specification.md` ganha RF12 e RNF06 formalizando o requisito.
+- Documentar explicitamente que o sistema NÃO é uma ferramenta de intervenção em tempo
+  real (ADR-002 já implica isso, mas aqui a implicação é mais sensível e merece estar
+  explícita).
+**Alternativas consideradas:** Deixar a triagem de risco como parte implícita do prompt
+de análise geral — é o comportamento atual, e é exatamente o gap que motivou este ADR.
+Delegar a triagem a um classificador de risco dedicado e validado clinicamente (fora do
+LLM Adapter) — desejável a longo prazo, mas fora do escopo do MVP; fica registrado como
+direção futura (ver roadmap.md).

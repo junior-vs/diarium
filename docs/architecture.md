@@ -73,9 +73,16 @@ comum implementada por adapters específicos:
 
 ```python
 class LLMAdapter(ABC):
+    def screen_risk(self, text: str) -> RiskScreeningResult: ...
     def analyze_entry(self, text: str, habit_data: dict) -> AnalysisResult: ...
     def consolidate(self, analyses: list[AnalysisResult], habit_data: list[dict]) -> ReportResult: ...
 ```
+
+`screen_risk` é chamado antes e independentemente de `analyze_entry`, para toda entrada
+e cada bloco de gatilho isoladamente (ver ADR-022). Retorna um resultado estruturado
+(`sem_indicio` / `possivel_risco`), nunca texto livre — a resposta mostrada ao usuário
+quando há possível risco é conteúdo fixo (`bloco-seguranca.md`), controlado pelo
+Gerador de Saída, não pelo LLM.
 
 Primeira implementação: **Gemini** (via `google-generativeai`), usando saída estruturada
 (JSON schema / function calling) — não texto livre parseado por regex. A resposta é
@@ -92,7 +99,10 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 ### 2.5 Gerador de Saída
 - **Análise individual:** gera um novo arquivo markdown vinculado à entrada original e,
   quando configurado, pode anexar uma seção determinística na nota de origem sem
-  sobrescrever o conteúdo existente.
+  sobrescrever o conteúdo existente. Quando a triagem de risco (`screen_risk`) indicar
+  `possivel_risco` para a entrada ou algum bloco de gatilho, insere no topo o conteúdo
+  fixo de `bloco-seguranca.md` — nunca texto gerado pelo LLM (ver ADR-022) — sem
+  suprimir a análise TCC normal.
 - **Relatório consolidado:** agrega as notas brutas de um intervalo, identifica padrões
   recorrentes, gera markdown único e respeita o layout canônico `analyses/YYYY/MMMM`.
 
@@ -101,10 +111,13 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 ### Análise individual
 1. Usuário roda `analisar --arquivo entrada.md`.
 2. CLI lê o arquivo.
-3. Motor de Análise monta prompt e envia ao LLM Adapter.
-4. LLM Adapter chama a API configurada.
-5. Resposta é parseada e formatada.
-6. Gerador de Saída escreve markdown de análise.
+3. Para a entrada geral e para cada bloco de gatilho isoladamente, o Motor de Análise
+   primeiro executa a triagem de risco via LLM Adapter (`screen_risk`).
+4. Motor de Análise monta o prompt de análise TCC e envia ao LLM Adapter.
+5. LLM Adapter chama a API configurada.
+6. Resposta é parseada e formatada.
+7. Gerador de Saída escreve markdown de análise, inserindo o bloco de segurança fixo
+   no topo quando a triagem indicar `possivel_risco` (ver ADR-022).
 
 ### Relatório consolidado
 1. Usuário roda `relatorio --de X --ate Y`.
