@@ -2,74 +2,99 @@
 
 ## 1. Visão Geral
 Sistema para processar diários pessoais (escritos em Markdown no Obsidian) usando um LLM,
-aplicando abordagem TCC (Terapia Cognitivo-Comportamental) para identificar distorções
-cognitivas e estruturar registros no modelo ABC/ABCDE. Uso pessoal, com output também
-aproveitável pelo psicólogo do usuário.
+aplicando abordagem TCC (Terapia Cognitivo-Comportamental) para identificar possíveis
+padrões de pensamento e estruturar registros no modelo ABC/ABCDE. Uso pessoal, com output
+também aproveitável pelo psicólogo do usuário.
+
+O Diarium é um **registro estruturado de pensamentos** (thought record) com acúmulo
+longitudinal de diário narrativo livre — não é uma implementação de *expressive writing*
+(Pennebaker) nem reivindica seus efeitos, que na literatura são pequenos e heterogêneos
+(`theoretical-background.md` §6).
 
 ## 2. Objetivos
-- Ajudar o usuário a registrar e refletir sobre pensamentos/eventos diários, com baixa carga cognitiva (perfil TDAH).
-- Identificar automaticamente distorções cognitivas nos registros, quando presentes.
-- Estruturar entradas livres no modelo ABC/ABCDE quando aplicável (opcional, não obrigatório por entrada).
-- Rastrear hábitos e métricas de autorregulação (sono, energia, estresse, hidratação, etc.) de forma estruturada.
-- Registrar ativação comportamental (atividades realizadas e prazer/domínio percebido) e contra-evidências de crenças negativas (positive data log), complementando o registro de distorções.
-- Gerar relatórios periódicos consolidados para acompanhamento (próprio e/ou terapêutico).
+- Ajudar o usuário a registrar e refletir sobre pensamentos/eventos diários, com baixa
+  carga cognitiva (perfil TDAH), sem apresentar isso como tratamento (§7).
+- Identificar possíveis padrões de pensamento nos registros como hipóteses de
+  investigação, nunca como classificação definitiva (§4).
+- Estruturar entradas livres no modelo ABC/ABCDE quando aplicável, sem apresentar essa
+  estrutura como equivalente ao modelo cognitivo de Beck (§1.2).
+- Executar triagem de risco separada da análise cognitiva, como requisito de segurança
+  não-negociável (§10).
+- Gerar relatórios de período e de tendência com correlações formuladas como associação
+  observada, nunca como causalidade (§8.6).
+- Garantir, de forma determinística (não dependente do LLM), que toda saída deixe claro
+  seu limite de papel (§9).
 
-## 3. Escopo
+## 3. Escopo (v1 — conforme `roadmap.md`)
 
-### Incluso (v1)
-- Script/comando manual que lê arquivo(s) markdown do Obsidian.
-- Processamento via API de LLM (agnóstico de provedor).
-- Geração de:
-  - Arquivo markdown de análise por entrada (distorções identificadas, estrutura ABC/ABCDE sugerida quando aplicável).
-  - Relatório periódico consolidado (padrões recorrentes, evolução, distorções mais frequentes, correlação entre hábitos e humor/estresse).
-- Prompts guiados fixos para orientar o registro (biblioteca de prompts TCC), divididos em blocos manhã/noite.
-- Template de diário com front-matter estruturado para tracking de hábitos (sono, energia, estresse, hidratação, sol, atividade física, leitura, estudo, MIT, atividades realizadas + prazer/domínio percebido).
-- Bloco opcional de Positive Data Log, espelhando o padrão do Registro de Gatilho (baixa fricção, repetível, não obrigatório).
+### Incluso
+- CLI para análise individual de entrada (`diario-tcc analisar`).
+- CLI para relatório de período, com presets diário/semanal/mensal (`diario-tcc relatorio`).
+- CLI para relatório de tendência, para intervalos longos (trimestral/semestral/anual).
+- LLM Adapter com suporte a pelo menos um provedor de API, isolado por interface.
+- Biblioteca de prompts guiados (registro) e de análise/consolidação.
+- Triagem de risco separada da análise TCC, com bloco de segurança determinístico.
+- Rodapé de limite de papel, fixo e incondicional, em toda saída.
+- Template de diário com front-matter estruturado para hábitos (sono, energia, estresse,
+  hidratação, sol, atividade física, leitura, estudo, MIT) e ativação comportamental
+  (atividade + prazer/domínio percebido), como variáveis de contexto autorrelatadas.
+- Bloco opcional de Positive Data Log.
 - Status canônico da entrada diária: `processado`.
 
 ### Fora do escopo (v1)
-- Automação/watch de pasta.
-- App mobile/web dedicado.
-- Modelo local (Ollama).
-- Interface gráfica própria (usa Obsidian como front-end).
+- Automação/watch de pasta (ADR-002; v2).
+- App mobile/web dedicado; interface gráfica própria (usa Obsidian como front-end).
+- Modelo local (Ollama) (v2).
+- Distinção entre pensamento automático pontual e processos cíclicos de
+  preocupação/ruminação (Terapia Metacognitiva, Wells — §3.4). Fundamentação já
+  registrada na teoria, sem requisito funcional correspondente neste v1.
+- Classificador de risco validado clinicamente fora do LLM genérico (v3).
 
 ## 4. Requisitos Funcionais
 | ID | Requisito |
 |----|-----------|
 | RF01 | O sistema deve ler um arquivo markdown de entrada (diário) via caminho informado pelo usuário. |
 | RF02 | O sistema deve enviar o conteúdo ao LLM configurado via API, com prompt estruturado para análise TCC. |
-| RF03 | O sistema deve identificar e listar distorções cognitivas presentes no texto. |
-| RF04 | O sistema deve sugerir estruturação de cada ocorrência de gatilho registrada na entrada (podendo haver mais de uma por dia, cada uma timestampada) no modelo ABC/ABCDE, incluindo o comportamento de resposta (evitação, comportamento de segurança, etc.). Por padrão, D (Dispute) é gerado como perguntas socráticas abertas, não como resposta resolvida, e E (Effect) permanece em aberto na análise automática, quando aplicável. |
+| RF03 | O sistema deve identificar possíveis distorções cognitivas, citando o trecho correspondente, e apresentá-las como hipótese ("pode haver um padrão de..."), nunca como diagnóstico. A contagem/frequência é dado descritivo, não indicador de gravidade clínica (§4.2–§4.4). |
+| RF04 | O sistema deve estruturar cada ocorrência de gatilho da entrada (podendo haver mais de uma por dia, timestampada) no modelo ABC/ABCDE, incluindo Comportamento (evitação, comportamento de segurança). A função hipotética desse comportamento deve ser formulada como pergunta investigativa, nunca como afirmação categórica (§3.3, §3.6). Por padrão, D é gerado como 2–3 perguntas socráticas abertas; E permanece em aberto. |
 | RF05 | O sistema deve gerar um arquivo markdown de saída com a análise, salvo em local configurável. |
-| RF06 | O sistema deve permitir gerar relatório consolidado a partir de múltiplas entradas (intervalo de datas configurável). |
-| RF07 | O sistema deve oferecer prompts guiados (biblioteca pré-definida) para auxiliar o usuário a escrever a entrada. |
-| RF08 | O provedor de LLM deve ser configurável (API key + endpoint/modelo), permitindo troca futura sem alterar o core. |
-| RF09 | O sistema deve ler campos estruturados do front-matter (hábitos, humor, sono, etc.) para compor o relatório consolidado, sem depender do LLM para extrair esses dados. |
-| RF10 | O relatório consolidado deve correlacionar hábitos rastreados (sono, estresse, energia) com padrões emocionais/distorções identificadas no período. |
-| RF11 | O relatório consolidado deve evidenciar temas ou crenças recorrentes por trás de distorções/situações aparentemente distintas ao longo do período, apresentados como observação para reflexão (pergunta aberta), nunca como rótulo clínico, nome de schema ou conclusão fechada. |
-| RF12 | O sistema deve executar uma triagem de risco (indício de ideação de dano a si mesmo) de forma independente da análise de distorções, para cada entrada e cada bloco de gatilho processado. Ao detectar possível risco, deve incluir um bloco de segurança fixo e pré-revisado (não gerado pelo LLM) com recursos de ajuda, adicionado à saída sem suprimir a análise normal. |
-| RF13 | O sistema deve registrar, via front-matter, a atividade mais significativa do dia e os níveis de prazer e domínio percebidos nela (escala 0-5), e o relatório consolidado deve correlacionar esses dados com humor/estresse (ativação comportamental). |
-| RF14 | O sistema deve oferecer uma seção opcional e de preenchimento livre para registrar, quando o usuário quiser, evidências que contrariem um pensamento negativo recorrente (positive data log) — não obrigatória, seguindo o mesmo princípio de baixa fricção do restante do template. |
-| RF15 | O sistema deve gerar, sob demanda, um resumo compacto ("sessão-ponte") dos padrões mais recorrentes desde o último relatório consolidado — reaproveitando os dados de RF06/RF10/RF11 — formatado para caber em poucos minutos de conversa numa sessão de terapia. |
+| RF06 | O sistema deve permitir gerar relatório de período a partir de múltiplas entradas, com intervalo configurável livremente e presets de conveniência (diário, semanal, mensal). Processa as entradas do intervalo diretamente. |
+| RF07 | Para intervalos longos (preset trimestral, semestral, anual, ou intervalo customizado acima de um limiar configurável, ex: 45 dias), o sistema deve gerar um relatório de tendência: agrega sobre sub-períodos já processados (não entradas brutas) e evidencia variação entre eles (ex: tema mais/menos presente, mudança na correlação hábito-humor). Segue a mesma restrição de linguagem de RNF07 ("apareceu com mais frequência", nunca "piorou"/"causou"). |
+| RF08 | O relatório de tendência depende de sub-períodos já processados; se faltarem, o sistema deve indicar quais em vez de agregar dados incompletos silenciosamente. |
+| RF09 | As seções de correlação de hábitos (RF13) e tema recorrente (RF14) só devem ser geradas quando o número de entradas do período/sub-período atingir um mínimo configurável (default: 5). Abaixo disso, indicar "dados insuficientes" explicitamente. |
+| RF10 | O sistema deve oferecer prompts guiados (biblioteca pré-definida) para auxiliar o usuário a escrever a entrada. |
+| RF11 | O provedor de LLM deve ser configurável (API key + endpoint/modelo), permitindo troca futura sem alterar o core. |
+| RF12 | O sistema deve ler campos estruturados do front-matter (hábitos, humor, sono, etc.) para compor os relatórios, sem depender do LLM para extrair esses dados. |
+| RF13 | Os relatórios devem relacionar hábitos rastreados (sono, estresse, energia) com padrões emocionais/distorções do período, usando exclusivamente linguagem de associação observada. Nunca linguagem causal ou mecanismo neurobiológico (§8.6). |
+| RF14 | Os relatórios devem evidenciar temas ou crenças recorrentes por trás de distorções/situações aparentemente distintas, como observação para reflexão (pergunta aberta), nunca como rótulo clínico, nome de schema ou crença nuclear (§5.5, ADR-021). |
+| RF15 | O sistema deve executar triagem de risco de forma independente da análise de distorções, para cada entrada e cada bloco de gatilho. Ao detectar possível risco, inclui um bloco de segurança fixo e pré-revisado (não gerado pelo LLM), sem suprimir a análise normal. Parte do escopo v1, não um adicional pós-lançamento (§10, ADR-022). |
+| RF16 | O sistema deve registrar, via front-matter, a atividade mais significativa do dia e níveis de prazer e domínio percebidos (escala 0-5), e os relatórios devem correlacionar esses dados com humor/estresse (ativação comportamental), seguindo a mesma restrição de linguagem de RF13. |
+| RF17 | O sistema deve oferecer uma seção opcional de preenchimento livre para registrar evidências que contrariem um pensamento negativo recorrente (positive data log), não obrigatória. |
+| RF18 | Toda saída do sistema (análise individual, relatório de período, relatório de tendência) deve incluir um rodapé fixo, não gerado pelo LLM, reafirmando: (1) o conteúdo é hipótese de investigação, não diagnóstico; (2) o sistema não substitui avaliação ou acompanhamento profissional. Incondicional — independente do bloco de RF15, que é condicional a risco detectado. |
 
 ## 5. Requisitos Não-Funcionais
 | ID | Requisito |
 |----|-----------|
 | RNF01 | Dados sensíveis (diários) não devem ser persistidos fora do ambiente local do usuário, exceto na chamada à API do LLM. |
-| RNF02 | Arquitetura deve isolar a camada de LLM (adapter/interface) para permitir troca de provedor (API → modelo local) sem refatoração ampla. |
+| RNF02 | Arquitetura deve isolar a camada de LLM (adapter/interface) para permitir troca de provedor sem refatoração ampla. |
 | RNF03 | Formato de entrada/saída deve ser markdown puro, compatível com Obsidian. |
 | RNF04 | Execução via linha de comando (CLI), sem dependência de interface gráfica própria. |
-| RNF05 | O template de entrada deve minimizar carga cognitiva e função executiva exigida: prompts fixos, curtos, sem exigência de texto narrativo longo (design orientado a TDAH). |
-| RNF06 | O sistema não deve se apresentar, funcionar, ou ser divulgado como ferramenta de resposta a emergências em tempo real ou substituto de linha de crise — a triagem de risco ocorre apenas quando o CLI é executado sob demanda (ADR-002), não no momento da escrita. |
+| RNF05 | O template de entrada deve minimizar carga cognitiva e função executiva exigida. Hipótese de design orientada a TDAH, não alegação de eficácia clínica (§7.2, §7.4). |
+| RNF06 | O sistema não deve se apresentar como ferramenta de resposta a emergências em tempo real — a triagem ocorre apenas quando o CLI é executado sob demanda (ADR-002). |
+| RNF07 | Toda saída interpretativa do LLM (RF03, RF04, RF13, RF14) deve seguir linguagem epistêmica hedged (hipótese revisável, pergunta, associação observada), nunca linguagem categórica, causal ou de conclusão clínica fechada (§3.6, §4.2, §5.5, §8.6, §9). |
 
 ## 6. Critérios de Aceite
-- Rodar o comando sobre um arquivo de diário gera um markdown de análise coerente com TCC.
-- Rodar o comando de relatório sobre um intervalo de datas consolida padrões de múltiplas entradas.
+- Rodar o comando sobre um arquivo de diário gera análise coerente com TCC, sem linguagem categórica ou causal, terminando no rodapé de RF18.
+- Uma entrada com conteúdo de risco simulado produz saída com o bloco de segurança de `bloco-seguranca.md` no topo, análise normal preservada abaixo, e o rodapé de RF18 ao final.
+- Relatório de período com menos de 5 entradas indica "dados insuficientes" nas seções de correlação/tema, em vez de omiti-las ou forçar conclusão.
+- Relatório de tendência sobre um semestre com sub-períodos mensais faltantes indica quais faltam, em vez de agregar parcialmente sem aviso.
+- Nenhuma saída do sistema nomeia schema clínico, crença nuclear ou diagnóstico.
 - Trocar o provedor de LLM (via config) não exige alteração no código core.
 
 ## 7. Riscos / Pontos de Atenção
-- **Privacidade:** conteúdo sensível trafega para API externa — considerar aviso/consentimento explícito.
-- **Qualidade clínica:** análise de LLM não substitui avaliação profissional — deixar isso explícito no output.
-- **Rotulagem indevida:** ao evidenciar temas recorrentes de crença (RF11), o sistema não deve atribuir nomes técnicos de schema nem apresentar isso como conclusão definitiva — sempre como observação para reflexão (ver ADR-021).
-- **Detecção tardia de risco:** como o processamento é sob demanda (ADR-002), a triagem de risco (RF12) só ocorre quando o CLI é executado, não no momento da escrita — o sistema não deve se apresentar como resposta a emergências em tempo real (ver RNF06, ADR-022).
-- **Migração para modelo local:** desenhar o adapter de LLM desde já pensando nessa troca.
+- **Privacidade:** conteúdo sensível trafega para API externa.
+- **Qualidade clínica:** análise de LLM não substitui avaliação profissional — reforçado estruturalmente por RF18, não apenas por instrução de prompt.
+- **Rotulagem indevida:** RF14 não deve nomear schema/crença nuclear.
+- **Causalidade indevida:** RF13/RF16 não devem sugerir causa ou mecanismo neurobiológico.
+- **Detecção tardia de risco:** RF15 só age quando o CLI roda (RNF06).
+- **Drift prompt-vs-documentação:** já observado neste projeto (D resolvido em vez de socrático em `analysis.txt`) — recomenda-se teste de sincronização doc↔prompt real como salvaguarda de RNF07.

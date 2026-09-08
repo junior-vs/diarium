@@ -5,10 +5,11 @@
 1. Fundação (parser + models)
 2. LLM Adapter (Gemini)
 3. Análise individual (RF01-RF05)
-4. Relatório consolidado (RF06, RF09, RF10)
-5. Prompts guiados / template (RF07)
-6. Config e CLI (RF08, RNF04)
-7. Testes e validação
+4. Relatório de período e tendência (RF06-RF09), front-matter (RF12), correlação (RF13)
+5. Prompts guiados / template (RF10)
+6. Config e CLI (RF11, RNF04)
+7. Triagem de risco (RF15) e rodapé de limite de papel (RF18) — **pendente de implementação**, ver nota abaixo
+8. Testes e validação
 
 ---
 
@@ -118,13 +119,13 @@ Regra ADR-009: só `analysis.py` chama o `LLMAdapter`; CLI não chama diretament
 
 ---
 
-## Fase 4 — Relatório consolidado (RF06, RF09, RF10)
+## Fase 4 — Relatório de período e tendência (RF06-RF09, RF12, RF13)
 
 ### T4.1 — Coleta de dados do período (`core/report.py`)
 - Localizar as notas brutas em `diary/YYYY/MMMM` como fonte de verdade; se houver análises ou relatórios pré-existentes no intervalo, avisar o usuário e regenerar a partir das notas originais.
-- Ler campos de hábito **diretamente do front-matter das entradas** (RF09) — nunca pedir ao LLM para extrair.
+- Ler campos de hábito **diretamente do front-matter das entradas** (RF12) — nunca pedir ao LLM para extrair.
 
-### T4.2 — Consolidação via LLM (RF10)
+### T4.2 — Consolidação via LLM (RF13)
 - Montar `dados_estruturados_periodo` (lista de `HabitData` serializados) + `lista_de_analises` (resumos das `AnalysisResult`).
 - Chamar `adapter.consolidate(...)`.
 - Correlação hábito×humor: **decisão de implementação** — correlação pode ser (a) inteiramente delegada ao LLM via prompt (como está em `prompts.md`), ou (b) pré-calculada em Python (ex: correlação simples sono×estresse) e passada como dado extra ao LLM. Sugestão: começar com (a) por ser mais simples e já coberto pelo prompt existente; abrir ADR se depois quiser (b).
@@ -134,7 +135,7 @@ Regra ADR-009: só `analysis.py` chama o `LLMAdapter`; CLI não chama diretament
 
 ---
 
-## Fase 5 — Prompts guiados / template (RF07)
+## Fase 5 — Prompts guiados / template (RF10)
 
 ### T5.1 — Comando de scaffold de entrada (opcional, avaliar se está no escopo v1)
 Specification não define um comando explícito para *criar* a entrada do dia — isso é responsabilidade do Obsidian (Templates core plugin) conforme ADR-004/012. **Ação:** não implementar comando de criação de arquivo no CLI; apenas garantir que `docs/template-diario.md` seja o template configurado no plugin Templates do Obsidian. Task real aqui é de configuração, não de código.
@@ -144,7 +145,7 @@ Conferir que `diarium-vault` tem o template instalado conforme `docs/obsidian-se
 
 ---
 
-## Fase 6 — Config e CLI (RF08, RNF04)
+## Fase 6 — Config e CLI (RF11, RNF04)
 
 ### T6.1 — `config.py`
 - Carregar provedor + API key de variável de ambiente ou `config.yaml`/`.env` (já no `.gitignore`).
@@ -177,7 +178,45 @@ def relatorio(de: str, ate: str):
 
 ---
 
-## Fase 7 — Testes e validação (AGENTS §9)
+## Fase 7 — Triagem de risco (RF15) e rodapé de limite de papel (RF18)
+
+**Status:** não implementado no código atual — `LLMAdapter` hoje só expõe `analyze_entry`
+e `consolidate`; não há `screen_risk`, nenhum enum de risco, e `bloco-seguranca.md` não é
+referenciado em nenhum módulo Python. Isso diverge de ADR-022, que trata esse requisito
+como não-negociável para o v1.
+
+### T7.1 — `screen_risk` na interface (`core/llm/base.py`)
+```python
+class RiskScreeningResult(str, Enum):
+    SEM_INDICIO = "sem_indicio"
+    POSSIVEL_RISCO = "possivel_risco"
+
+class LLMAdapter(ABC):
+    @abstractmethod
+    def screen_risk(self, text: str) -> RiskScreeningResult: ...
+```
+Chamado em `core/analysis.py` ANTES e independentemente de `analyze_entry`, para o texto
+completo e para cada bloco de gatilho isoladamente (ADR-022).
+
+### T7.2 — Inserção determinística do bloco de segurança
+Quando `POSSIVEL_RISCO`, `core/report.py` deve prefixar a saída com o conteúdo estático
+de `docs/bloco-seguranca.md` (carregado de arquivo, nunca gerado pelo LLM), preservando a
+análise normal abaixo.
+
+### T7.3 — Rodapé fixo (RF18)
+Toda saída (`analisar`, `relatorio` de período, `relatorio` de tendência) recebe um
+rodapé estático de 2-3 linhas (hipótese/não-diagnóstico, não substitui profissional),
+carregado de arquivo, incondicional — independente do bloco de T7.2.
+
+### T7.4 — Teste de sincronização doc↔prompt
+Cobrir o gap já identificado nesta revisão: os arquivos `.txt` reais em
+`infrastructure/llm/prompts/` divergiram de `docs/prompts.md` (D resolvido em vez de
+socrático). Adicionar teste que compare os `.txt` carregados em runtime contra um
+snapshot derivado do markdown, para travar build em caso de nova deriva silenciosa.
+
+---
+
+## Fase 8 — Testes e validação (AGENTS §9)
 
 | Alvo | Casos |
 |---|---|
@@ -185,6 +224,7 @@ def relatorio(de: str, ate: str):
 | `LLMAdapter` | mock/stub (T2.3), sem chamada real; validar erro explícito em resposta fora do schema |
 | `analysis.py` / `report.py` | fluxo completo com `FakeLLMAdapter`, verificação de markdown de saída (front-matter correto, link `[[YYYY-MM-DD]]`) |
 | Critérios de aceite (specification §6) | testes de integração: rodar `analisar` sobre fixture real gera output coerente; rodar `relatorio` sobre intervalo consolida múltiplas entradas; trocar adapter via config não altera `core/` |
+| Triagem de risco (T7) | fixture com conteúdo de risco simulado produz bloco de segurança no topo + rodapé RF18 ao final; fixture sem risco produz apenas o rodapé RF18 |
 
 **Sugestão:** `pytest` + fixtures de arquivos `.md` de exemplo em `tests/fixtures/`.
 
@@ -199,7 +239,8 @@ def relatorio(de: str, ate: str):
 5. T2.2 (Gemini real, plugado por último — reduz custo de iteração com API paga)
 6. T4.1 → T4.2 → T4.3 (relatório)
 7. T5.2 (checagem de template/vault)
-8. T7 em paralelo desde o T1.3
+8. T7.1 → T7.2 → T7.3 → T7.4 (triagem de risco e rodapé — bloqueador de v1 por ADR-022, priorizar antes de fechar o release, não deixar para o final)
+9. Fase 8 (testes) em paralelo desde o T1.3
 
 ## Riscos/decisões em aberto a sinalizar antes de codar
 - Quem confirma a atualização do front-matter `processado: true` na entrada de origem (T3.2) — o fluxo precisa ser implementado de forma determinística.

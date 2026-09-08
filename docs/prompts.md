@@ -1,7 +1,7 @@
 # Biblioteca de Prompts — TCC
 
 ## 1. Prompts Guiados (para o usuário escrever a entrada)
-Usados para orientar o registro no momento da escrita (RF07). Divididos em blocos curtos,
+Usados para orientar o registro no momento da escrita (RF10). Divididos em blocos curtos,
 alinhados ao template (ver `obsidian-setup.md`), pra reduzir carga cognitiva.
 
 **Manhã:**

@@ -73,7 +73,7 @@ porque lógica de negócio tende a vazar para dentro do CLI se não isolada desd
 **Data:** 2026-09-03
 **Decisão:** O `LLMAdapter` retorna dados estruturados (validados via Pydantic), usando
 JSON schema / function calling do provedor, em vez de texto livre parseado por regex.
-**Motivo:** Texto livre é frágil de parsear e falha silenciosamente. RF10 (correlacionar
+**Motivo:** Texto livre é frágil de parsear e falha silenciosamente. RF13 (correlacionar
 hábitos com distorções no relatório) exige dados programáticos. Resposta fora do schema
 deve falhar de forma explícita, não ser aceita "quase certa".
 **Implicação:** `docs/prompts.md` deve refletir os prompts como parte de uma chamada com
@@ -144,7 +144,7 @@ do sistema é a crise de ansiedade em si — não a reflexão noturna. Pensament
 relatado horas depois sofre reconstrução retrospectiva e perde fidelidade clínica;
 capturar no calor do momento preserva o dado que tem valor terapêutico real. Uma seção
 única por dia não comporta múltiplas crises no mesmo dia nem preserva o horário de cada
-uma, informação necessária para correlação (RF10).
+uma, informação necessária para correlação (RF13).
 **Implicação:** Estrutura interna do campo (Evento/Pensamento/Emoção) permanece igual —
 validado como suficiente mesmo em estado de crise. Muda apenas a cardinalidade (1→N por
 dia) e a necessidade de timestamp por ocorrência. Não introduz plugin novo nem automação
@@ -157,7 +157,7 @@ cursor já posicionado na nota do dia em aberto.
   cada um estruturado em ABC/ABCDE independentemente.
 - `obsidian-setup.md`: documentar fluxo de "Insert template" + hotkey.
 **Alternativas consideradas:** Manter seção única e aceitar perda de granularidade —
-descartado por comprometer diretamente RF10 e o job principal identificado na entrevista.
+descartado por comprometer diretamente RF13 e o job principal identificado na entrevista.
 Nota separada por gatilho (fora da nota do dia) — descartado por fragmentar a fonte de
 verdade e complicar o parsing do CLI sem ganho claro sobre o append timestampado.
 
@@ -227,7 +227,7 @@ maior que um diagnóstico: pode ancorar prematuramente a autopercepção da pess
 rótulo impreciso. Ver `theoretical-background.md` §5.
 **Implicação:** `prompts.md` §3 (consolidação) ganha item de "tema recorrente", com
 instrução explícita de não nomear schema e de formular como pergunta, não afirmação.
-`specification.md` ganha RF11 registrando esse requisito e um risco correspondente na
+`specification.md` ganha RF14 registrando esse requisito e um risco correspondente na
 seção 7.
 **Alternativas consideradas:** Mapear diretamente para a taxonomia de Young (18
 schemas) — descartado por exigir instrumento validado que o projeto não usa, e por
@@ -259,7 +259,7 @@ alarmistas.
   negativo) — ver `theoretical-background.md` §10.
 - O bloco de segurança é conteúdo estático, versionado como ativo do projeto (mesmo
   princípio de ADR-016 para prompts) — ver `bloco-seguranca.md`.
-- `specification.md` ganha RF12 e RNF06 formalizando o requisito.
+- `specification.md` ganha RF15, RF18 e RNF06 formalizando o requisito.
 - Documentar explicitamente que o sistema NÃO é uma ferramenta de intervenção em tempo
   real (ADR-002 já implica isso, mas aqui a implicação é mais sensível e merece estar
   explícita).
