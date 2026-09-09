@@ -8,6 +8,18 @@ from ..ports.entry_repository import EntryRepository
 from ..ports.llm_adapter import LLMAdapter
 from .analyze_entry import build_entry_payload, run_analysis
 
+MIN_ENTRIES_FOR_PATTERNS = 5  # configurável via Settings, ver RF09
+
+def _apply_min_data_guard(report: ReportResult, entry_count: int) -> ReportResult:
+    """Sobrescreve seções que dependem de acúmulo se não houver dado suficiente.
+    Determinístico — não depende do LLM se comportar bem (mesmo princípio de RF15/RF18)."""
+    if entry_count >= MIN_ENTRIES_FOR_PATTERNS:
+        return report
+    return report.model_copy(update={
+        "correlacoes_habito_humor": [],
+        "tema_recorrente": None,
+        "dados_insuficientes": True,
+    })
 
 def generate_period_report(
 	llm: LLMAdapter,
