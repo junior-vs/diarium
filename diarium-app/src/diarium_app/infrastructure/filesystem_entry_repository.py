@@ -7,11 +7,20 @@ from typing import cast
 import frontmatter
 
 from ..domain.entry_date import require_entry_date, resolve_entry_date
-from ..domain.models import AnalysisResult, EntryData, HabitData, ReportResult
+from ..domain.models import (
+	AnalysisResult,
+	AtividadeSignificativa,
+	EntryData,
+	HabitData,
+	ReportResult,
+	TrendReportResult,
+)
 from ..formatters.analysis_markdown import build_analysis_markdown
 from ..formatters.report_markdown import build_report_markdown
 from ..formatters.source_note import build_source_note_section, upsert_generated_section
+from ..formatters.trend_markdown import build_trend_markdown
 from ..ports.entry_repository import EntryRepository
+from .asset_loader import load_footer, load_safety_block
 
 
 class FileSystemEntryRepository(EntryRepository):
@@ -22,6 +31,14 @@ class FileSystemEntryRepository(EntryRepository):
 		"""Carregar uma entrada de diário a partir de um arquivo Markdown com frontmatter."""
 		post = frontmatter.load(str(path))
 		metadata = post.metadata
+		raw_ativ = metadata.get("atividade_significativa")
+		atividade_significativa: AtividadeSignificativa | None = None
+		if isinstance(raw_ativ, dict):
+			atividade_significativa = AtividadeSignificativa(
+				descricao=cast("str | None", raw_ativ.get("descricao")),
+				prazer=cast("int | None", raw_ativ.get("prazer")),
+				dominio=cast("int | None", raw_ativ.get("dominio")),
+			)
 		habit_data = HabitData(
 			mit=cast("str | None", metadata.get("mit")),
 			sono=cast("float | None", metadata.get("sono")),
@@ -32,6 +49,8 @@ class FileSystemEntryRepository(EntryRepository):
 			atividade_fisica=cast("bool | None", metadata.get("atividade_fisica")),
 			leitura=cast("bool | None", metadata.get("leitura")),
 			estudo=cast("bool | None", metadata.get("estudo")),
+			atividade_significativa=atividade_significativa,
+			positive_data_log=cast("str | None", metadata.get("positive_data_log")),
 		)
 		return EntryData(
 			data=cast("date | None", metadata.get("data")),
@@ -82,7 +101,12 @@ class FileSystemEntryRepository(EntryRepository):
 		entry_date = require_entry_date(entry)
 		path = self._analysis_path_for_date(entry_date)
 		path.parent.mkdir(parents=True, exist_ok=True)
-		path.write_text(build_analysis_markdown(entry, analysis), encoding="utf-8")
+		safety_block = load_safety_block()
+		footer = load_footer()
+		path.write_text(
+			build_analysis_markdown(entry, analysis, safety_block=safety_block, footer=footer),
+			encoding="utf-8",
+		)
 		return path
 
 	def save_report(
@@ -95,7 +119,30 @@ class FileSystemEntryRepository(EntryRepository):
 		"""Salvar o relatório de um intervalo de entradas de diário e retornar o caminho do arquivo gerado."""
 		path = self._report_path_for_date(start)
 		path.parent.mkdir(parents=True, exist_ok=True)
-		path.write_text(build_report_markdown(start, end, report, entries), encoding="utf-8")
+		footer = load_footer()
+		path.write_text(build_report_markdown(start, end, report, entries, footer=footer), encoding="utf-8")
+		return path
+
+	def find_existing_report(self, start: date, end: date) -> ReportResult | None:
+		"""Retornar um relatório de sub-período já persistido, se existir."""
+		path = self._report_path_for_date(start)
+		if not path.exists():
+			return None
+		post = frontmatter.load(str(path))
+		raw_report = post.metadata.get("report_json")
+		if raw_report is None:
+			return None
+		try:
+			return ReportResult.model_validate(raw_report)
+		except Exception:  # noqa: BLE001
+			return None
+
+	def save_trend_report(self, start: date, end: date, trend: TrendReportResult) -> Path:
+		"""Persistir um relatório de tendência e retornar seu caminho."""
+		path = self._trend_report_path_for_range(start, end)
+		path.parent.mkdir(parents=True, exist_ok=True)
+		footer = load_footer()
+		path.write_text(build_trend_markdown(start, end, trend, footer=footer), encoding="utf-8")
 		return path
 
 	def mark_source_processed(self, entry: EntryData, analysis: AnalysisResult, analysis_path: Path) -> None:
@@ -116,6 +163,10 @@ class FileSystemEntryRepository(EntryRepository):
 	def _report_path_for_date(self, entry_date: date) -> Path:
 		"""Retornar o caminho do arquivo de relatório para a data fornecida."""
 		return self._analysis_dir_for_date(entry_date) / f"{entry_date.year:04d}-{entry_date.month:02d}-relatorio.md"
+
+	def _trend_report_path_for_range(self, start: date, end: date) -> Path:
+		"""Retornar o caminho do arquivo de relatório de tendência para o intervalo fornecido."""
+		return self._vault_path / "analyses" / f"{start.year:04d}" / f"{start.isoformat()}_{end.isoformat()}-tendencia.md"
 
 	def _analysis_dir_for_date(self, entry_date: date) -> Path:
 		"""Retornar o diretório de análises para a data fornecida: analyses/AAAA/MM."""

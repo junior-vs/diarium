@@ -1,14 +1,14 @@
 # Roadmap
 
 ## v1 (atual — escopo definido em specification.md)
-- [ ] CLI para análise individual de entrada.
-- [ ] CLI para relatório de período (diário/semanal/mensal), com guarda de dado mínimo.
-- [ ] CLI para relatório de tendência (trimestral/semestral/anual), agregando sub-períodos.
-- [ ] LLM Adapter com suporte a pelo menos um provedor de API.
-- [ ] Biblioteca de prompts guiados e de análise.
-- [ ] Triagem de risco independente, com bloco de segurança determinístico (ADR-022).
-- [ ] Rodapé fixo de limite de papel em toda saída (não gerado pelo LLM).
-- [ ] Documentação (README, specification, architecture, prompts, decisions, obsidian-setup).
+- [x] CLI para análise individual de entrada.
+- [x] CLI para relatório de período (diário/semanal/mensal), com guarda de dado mínimo.
+- [x] CLI para relatório de tendência (trimestral/semestral/anual), agregando sub-períodos.
+- [x] LLM Adapter com suporte a pelo menos um provedor de API.
+- [x] Biblioteca de prompts guiados e de análise.
+- [x] Triagem de risco independente, com bloco de segurança determinístico (ADR-022).
+- [x] Rodapé fixo de limite de papel em toda saída (não gerado pelo LLM).
+- [x] Documentação (README, specification, architecture, prompts, decisions, obsidian-setup).
 
 ## v2 (planejado)
 - [ ] Automação: watch de pasta do Obsidian, processamento automático de novas entradas.

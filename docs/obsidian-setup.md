@@ -107,7 +107,7 @@ estudo: false
 ### Campos do front-matter
 
 | Campo | Tipo | Origem sugerida |
-|---|---|---|
+| --- | --- | --- |
 | `mit` | texto curto | manual |
 | `sono` | número (horas) | dispositivo (celular/smartwatch), quando disponível |
 | `estresse` | escala 1-5 | manual |
@@ -144,6 +144,7 @@ Conteúdo de `/templates/gatilho-rapido.md`:
 ```
 
 **Configuração:**
+
 1. `Configurações > Atalhos de teclado` → buscar "Insert template" → atribuir um atalho
    (ex: `Ctrl/Cmd + Shift + G`).
 2. Em crise ou evento importante: abrir a nota do dia, posicionar o cursor no fim,

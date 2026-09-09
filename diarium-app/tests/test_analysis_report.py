@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
+from diarium_app.domain.models import RiskScreeningResult, TrendReportResult
 from diarium_app.infrastructure.filesystem_entry_repository import FileSystemEntryRepository
 from diarium_app.infrastructure.llm import FakeLLMAdapter
 from diarium_app.formatters.analysis_markdown import build_analysis_markdown
@@ -119,3 +120,67 @@ def test_markdown_builders_include_expected_sections(tmp_path: Path) -> None:
 	assert "[[2026-09-03]]" in analysis_md
 	assert "### Distorções recorrentes" in report_md
 	assert "### Entradas cobertas" in report_md
+
+
+def test_repository_persists_and_finds_existing_report(tmp_path: Path) -> None:
+	entry_path = _write_diary(tmp_path, "2026-09-03")
+	repo = FileSystemEntryRepository(tmp_path)
+	entry = repo.load_entry(entry_path)
+	adapter = FakeLLMAdapter()
+	report = adapter.consolidate([], [build_entry_payload(entry)])
+
+	saved_path = repo.save_report(date(2026, 9, 1), date(2026, 9, 30), report, [entry])
+	assert saved_path.exists()
+
+	loaded_report = repo.find_existing_report(date(2026, 9, 1), date(2026, 9, 30))
+	assert loaded_report is not None
+	assert loaded_report.distorcoes_recorrentes == report.distorcoes_recorrentes
+
+
+def test_repository_saves_trend_report(tmp_path: Path) -> None:
+	repo = FileSystemEntryRepository(tmp_path)
+	trend = TrendReportResult(
+		variacao_temas=["Tema de controle mais presente"],
+		variacao_correlacoes=["Correlação sono x humor mais forte"],
+		sub_periodos_ausentes=["2026-07"],
+	)
+
+	trend_path = repo.save_trend_report(date(2026, 7, 1), date(2026, 9, 30), trend)
+	assert trend_path.exists()
+	content = trend_path.read_text(encoding="utf-8")
+	assert "## Relatório de Tendência" in content
+	assert "### Sub-períodos ausentes" in content
+	assert "2026-07" in content
+
+
+def test_load_entry_parses_behavioral_activation_and_positive_data_log(tmp_path: Path) -> None:
+	extra = """atividade_significativa:
+  descricao: Caminhada no parque
+  prazer: 4
+  dominio: 3
+positive_data_log: Recebi elogio do gestor hoje.
+"""
+	entry_path = _write_diary(tmp_path, "2026-09-05", extra_frontmatter=extra)
+	repo = FileSystemEntryRepository(tmp_path)
+	entry = repo.load_entry(entry_path)
+
+	assert entry.habit_data.atividade_significativa is not None
+	assert entry.habit_data.atividade_significativa.descricao == "Caminhada no parque"
+	assert entry.habit_data.atividade_significativa.prazer == 4
+	assert entry.habit_data.atividade_significativa.dominio == 3
+	assert entry.habit_data.positive_data_log == "Recebi elogio do gestor hoje."
+
+
+def test_analysis_pipeline_with_simulated_risk_produces_safety_block_and_footer(tmp_path: Path) -> None:
+	entry_path = _write_diary(tmp_path, "2026-09-08")
+	repo = FileSystemEntryRepository(tmp_path)
+	adapter = FakeLLMAdapter(default_risk=RiskScreeningResult.POSSIVEL_RISCO)
+
+	entry, analysis, analysis_path = analyze_entry(entry_path, adapter, repo)
+	content = analysis_path.read_text(encoding="utf-8")
+
+	assert "## Um espaço para pausar" in content
+	assert "Centro de Valorização da Vida (CVV)" in content
+	assert "## Análise" in content
+	assert "Limite de Papel" in content
+	assert content.index("## Um espaço para pausar") < content.index("## Análise")

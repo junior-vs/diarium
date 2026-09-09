@@ -4,6 +4,7 @@ from .gemini_adapter import GeminiAdapter
 from .prompt_loader import (
 	build_analysis_prompt,
 	build_consolidation_prompt,
+	build_risk_screening_prompt,
 	load_prompt,
 )
 
@@ -14,5 +15,6 @@ __all__ = [
 	"LLMResponseValidationError",
 	"build_analysis_prompt",
 	"build_consolidation_prompt",
+	"build_risk_screening_prompt",
 	"load_prompt",
 ]

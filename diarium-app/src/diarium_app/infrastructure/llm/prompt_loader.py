@@ -29,3 +29,7 @@ def build_consolidation_prompt(
 		dados_estruturados_periodo=dados_estruturados_periodo,
 		lista_de_analises=lista_de_analises,
 	)
+
+
+def build_risk_screening_prompt(conteudo: str) -> str:
+	return load_prompt("risk_screening.txt").format(conteudo=conteudo)

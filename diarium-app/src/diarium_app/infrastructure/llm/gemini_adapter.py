@@ -5,13 +5,25 @@ import json
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
-from ...domain.models import AnalysisResult, ReportResult
+from pydantic import BaseModel
+
+from ...domain.models import AnalysisResult, ReportResult, RiskScreeningResult
 from ...ports.llm_adapter import LLMAdapter, LLMResponseValidationError
-from .prompt_loader import build_analysis_prompt, build_consolidation_prompt
+from .prompt_loader import (
+	build_analysis_prompt,
+	build_consolidation_prompt,
+	build_risk_screening_prompt,
+)
 
 DEFAULT_MODEL_NAME = "gemini-1.5-flash"
 
-StructuredModel = TypeVar("StructuredModel", AnalysisResult, ReportResult)
+
+class RiskScreeningResponse(BaseModel):
+	model_config = {"extra": "ignore"}
+	risco: RiskScreeningResult
+
+
+StructuredModel = TypeVar("StructuredModel", AnalysisResult, ReportResult, RiskScreeningResponse)
 genai = cast(Any, importlib.import_module("google.genai"))
 types = cast(Any, importlib.import_module("google.genai.types"))
 
@@ -39,6 +51,11 @@ class GeminiAdapter(LLMAdapter):
 			raise ValueError("api_key is required for GeminiAdapter")
 		self._client = genai.Client(api_key=api_key)
 		self._model_name = model_name
+
+	def screen_risk(self, text: str) -> RiskScreeningResult:
+		prompt = build_risk_screening_prompt(conteudo=text)
+		response = self._generate_structured_response(prompt, RiskScreeningResponse)
+		return response.risco
 
 	def analyze_entry(self, text: str, habit_data: Mapping[str, Any]) -> AnalysisResult:
 		prompt = build_analysis_prompt(

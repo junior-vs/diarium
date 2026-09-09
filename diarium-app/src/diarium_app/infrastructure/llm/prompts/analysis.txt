@@ -16,13 +16,26 @@ Faça o seguinte:
    pensamento tudo-ou-nada, leitura mental, etc.), citando o trecho correspondente.
    Se o texto for muito curto ou não houver conteúdo suficiente, informe isso em vez
    de forçar uma análise.
-2. Se houver seção de "Gatilho do dia" preenchida, estruture no modelo ABC/ABCDE:
+2. A entrada pode conter zero, um ou múltiplos blocos de "Registro de Gatilho", cada
+   um identificado por um timestamp (### HH:MM — Gatilho) e contendo até 4 campos:
+   Evento, Pensamento, Emoção e Comportamento (o que a pessoa fez ou evitou fazer em
+   resposta). Para CADA bloco encontrado, estruture separadamente no modelo ABC/ABCDE,
+   preservando o horário de origem:
    - A (Activating event / evento ativador)
    - B (Belief / crença/pensamento)
-   - C (Consequence / consequência emocional e comportamental)
-   - D (Dispute / questionamento do pensamento, se possível inferir)
-   - E (Effect / novo efeito, se possível inferir)
-   Se a seção estiver vazia, não force essa estrutura — é opcional.
+   - C (Consequence / consequência emocional e comportamental — inclui o campo
+     Comportamento registrado)
+   - D (Dispute): NÃO forneça uma resposta pronta. Gere de 2 a 3 perguntas socráticas
+     abertas que ajudem a própria pessoa a questionar a crença (ex: "que evidência
+     sustenta esse pensamento?", "o que eu diria a um amigo na mesma situação?", "existe
+     uma explicação alternativa para o que aconteceu?"). Use o campo Comportamento como
+     pista: se indicar evitação ou comportamento de segurança, ao menos uma pergunta
+     deve testar diretamente a crença que esse comportamento protege de ser
+     desconfirmada.
+   - E (Effect): deixe em aberto. Não infira o novo efeito emocional/comportamental —
+     isso depende da resposta da pessoa às perguntas de D, que ainda não existe no
+     momento da análise.
+   Se não houver nenhum bloco de gatilho, não force essa estrutura — é opcional.
 3. Não faça diagnósticos clínicos. Não substitua avaliação profissional.
 4. Seja objetivo e evite linguagem alarmista.
 

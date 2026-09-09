@@ -1,6 +1,7 @@
 # Arquitetura: Diário TCC Assistido por LLM
 
 ## 1. Visão Geral da Arquitetura
+
 CLI que orquestra leitura de arquivos markdown, chamada a um LLM via adapter configurável,
 e geração de arquivos markdown de saída (análise individual e relatórios consolidados).
 
@@ -24,6 +25,7 @@ e geração de arquivos markdown de saída (análise individual e relatórios co
 ## 2. Componentes
 
 ### 2.0 Estrutura de Projeto (`diarium_app` + CLI)
+
 O código é organizado separando domínio, portas, formatação, casos de uso, infraestrutura
 e ponto de entrada, preparando reuso futuro por mobile app e bot Telegram sem reescrever
 a lógica de análise.
@@ -59,15 +61,19 @@ Regra: CLI (e futuramente o backend de mobile/bot) chama apenas os casos de uso 
 `use_cases/`. Nenhum ponto de entrada deve chamar o `LLMAdapter` diretamente.
 
 ### 2.1 CLI
+
 Ponto de entrada. Comandos principais:
+
 - `analisar --arquivo <path>` — processa uma entrada individual.
 - `relatorio --de <data> --ate <data>` — consolida múltiplas entradas em relatório periódico.
 
 ### 2.2 Leitor/Parser de Markdown
+
 Responsável por ler o arquivo do diário e extrair o conteúdo textual relevante
 (ignorando front-matter/metadados do Obsidian quando presentes).
 
 ### 2.3 LLM Adapter
+
 Camada de abstração entre o core do sistema e o provedor de LLM. Define uma interface
 comum implementada por adapters específicos:
 
@@ -93,10 +99,12 @@ Objetivo: trocar de provedor (ou migrar para modelo local) alterando apenas conf
 e adicionando um novo adapter, sem tocar no domínio ou nos casos de uso.
 
 ### 2.4 Motor de Análise TCC
+
 Contém os prompts estruturados (ver `prompts.md`) enviados ao LLM Adapter, e o parsing
 da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo).
 
 ### 2.5 Gerador de Saída
+
 - **Análise individual:** gera um novo arquivo markdown vinculado à entrada original e,
   quando configurado, pode anexar uma seção determinística na nota de origem sem
   sobrescrever o conteúdo existente. Quando a triagem de risco (`screen_risk`) indicar
@@ -109,6 +117,7 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 ## 3. Fluxo de Dados
 
 ### Análise individual
+
 1. Usuário roda `analisar --arquivo entrada.md`.
 2. CLI lê o arquivo.
 3. Para a entrada geral e para cada bloco de gatilho isoladamente, o Motor de Análise
@@ -120,6 +129,7 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
    no topo quando a triagem indicar `possivel_risco` (ver ADR-022).
 
 ### Relatório consolidado
+
 1. Usuário roda `relatorio --de X --ate Y`.
 2. CLI localiza as notas brutas do intervalo como fonte de verdade. Se houver análises ou
   relatórios pré-existentes, o usuário é avisado e o conteúdo é regenerado a partir das
@@ -129,15 +139,18 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 5. Gerador de Saída escreve relatório único.
 
 ## 4. Configuração
+
 - Provedor de LLM, API key, modelo: via arquivo de config (ex: `.env` ou `config.yaml`).
 - Caminhos de entrada/saída: configuráveis.
 
 ## 5. Decisões Arquiteturais Chave
+
 - **CLI em vez de watch automático:** simplicidade v1, controle explícito do usuário. (ver decisions.md)
 - **Adapter pattern para LLM:** preparar migração futura para modelo local sem refatoração.
 - **Markdown como formato universal:** compatibilidade nativa com Obsidian, sem dependência de banco de dados.
 
 ## 6. Extensibilidade Futura
+
 - Watch de pasta (automação).
 - Adapter para modelo local (Ollama).
 - App mobile e bot Telegram consumindo `core/` — nesse momento, `core/` provavelmente

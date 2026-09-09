@@ -39,7 +39,6 @@ Isso embasa teoricamente que a intervenção ou o registro no sistema não preci
 
 [Beck et al., 1979; Beck, 2020; Beck & Haigh, 2014]
 
-
 ## 1.2 Diferenciação entre o modelo de Beck e o modelo ABC da REBT
 
 O modelo ABC utilizado na Rational Emotive Behavior Therapy (REBT), desenvolvida por Albert Ellis, possui origem e terminologia próprias e não deve ser apresentado como se fosse simplesmente outra forma de nomear o modelo cognitivo de Beck.
@@ -192,14 +191,13 @@ Por outro lado, perguntas mais específicas podem favorecer a investigação e a
 
 ou:
 
-> “Que outra informação seria importante considerar antes de concluir que essa é a única explicação?” 
+> “Que outra informação seria importante considerar antes de concluir que essa é a única explicação?”
 
 ou ainda, focando na reavaliação de contexto:
 
 > "Se um amigo estivesse nessa mesma situação, o que você diria a ele?"
 
 [Padesky, 1993; Kazantzis et al., 2014; Kennerley, Kirk, & Westbrook, 2017]
-
 
 ## 2.3 Questionamento socrático não significa convencer o usuário
 
@@ -781,7 +779,6 @@ Crença central (conteúdo) ≠ Esquema cognitivo (estrutura)
 ```
 
 Embora exista continuidade histórica entre a Terapia Cognitiva e a Terapia do Esquema, a segunda desenvolveu um modelo teórico e clínico próprio.
-
 
 ### 5.4 A seta descendente
 

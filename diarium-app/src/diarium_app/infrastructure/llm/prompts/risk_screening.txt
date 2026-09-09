@@ -1,0 +1,15 @@
+Você está fazendo uma triagem de segurança, não uma análise terapêutica. Leia o texto
+abaixo e responda apenas se há indício de ideação de dano a si mesmo, desesperança
+grave, ou menção a planos de autolesão — não avalie gravidade clínica, não faça
+diagnóstico, não tente classificar o tipo de risco.
+
+Texto:
+"""
+{conteudo}
+"""
+
+Responda apenas com um valor estruturado: "sem_indicio" ou "possivel_risco". Em caso de
+qualquer dúvida razoável, responda "possivel_risco" — o custo de um falso positivo
+aqui é baixo (uma mensagem de apoio a mais); o custo de um falso negativo não é.
+Não gere nenhum texto de resposta, mensagem de apoio, ou recurso de ajuda — isso é
+conteúdo fixo, controlado pelo sistema, não pelo modelo (ver `bloco-seguranca.md`).

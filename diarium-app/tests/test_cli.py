@@ -69,3 +69,66 @@ def test_cli_analisar_and_relatorio(tmp_path: Path) -> None:
 	)
 	assert report_result.exit_code == 0, report_result.stdout
 	assert (tmp_path / "analyses" / "2026" / "09" / "2026-09-relatorio.md").exists()
+
+
+def test_cli_relatorio_presets(tmp_path: Path) -> None:
+	_write_diary(tmp_path)
+
+	# Preset mensal
+	result_mensal = runner.invoke(
+		app,
+		[
+			"relatorio",
+			"--preset",
+			"mensal",
+			"--referencia",
+			"2026-09-15",
+			"--provider",
+			"fake",
+			"--vault-path",
+			str(tmp_path),
+		],
+	)
+	assert result_mensal.exit_code == 0, result_mensal.stdout
+	assert (tmp_path / "analyses" / "2026" / "09" / "2026-09-relatorio.md").exists()
+
+	# Preset trimestral (intervalo > 45 dias, gera relatório de tendência)
+	result_trimestral = runner.invoke(
+		app,
+		[
+			"relatorio",
+			"--preset",
+			"trimestral",
+			"--referencia",
+			"2026-09-15",
+			"--provider",
+			"fake",
+			"--vault-path",
+			str(tmp_path),
+		],
+	)
+	assert result_trimestral.exit_code == 0, result_trimestral.stdout
+	assert (tmp_path / "analyses" / "2026" / "2026-07-01_2026-09-30-tendencia.md").exists()
+
+
+def test_cli_command_tendencia(tmp_path: Path) -> None:
+	result = runner.invoke(
+		app,
+		[
+			"tendencia",
+			"--preset",
+			"semestral",
+			"--referencia",
+			"2026-09-15",
+			"--vault-path",
+			str(tmp_path),
+		],
+	)
+	assert result.exit_code == 0, result.stdout
+	assert (tmp_path / "analyses" / "2026" / "2026-07-01_2026-12-31-tendencia.md").exists()
+
+
+def test_cli_relatorio_missing_params_fails() -> None:
+	result = runner.invoke(app, ["relatorio"])
+	assert result.exit_code != 0
+	assert "Especifique --de e --ate" in result.output

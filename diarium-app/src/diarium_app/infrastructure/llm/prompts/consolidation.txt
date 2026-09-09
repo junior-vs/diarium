@@ -4,12 +4,21 @@ MIT), referentes ao período de {data_inicio} a {data_fim}. Consolide:
 
 1. Distorções cognitivas mais recorrentes.
 2. Padrões de gatilhos (eventos ativadores) comuns, quando presentes.
-3. Correlação entre hábitos rastreados e humor/estresse (ex: dias com menos sono
+3. Padrões de comportamento de evitação ou comportamentos de segurança recorrentes
+   (ex: checagem, reasseguramento, fuga, evitação de situações específicas), quando
+   presentes.
+4. Tema ou crença recorrente por trás de distorções/situações aparentemente diferentes
+   (ex: a mesma ideia central de incapacidade aparecendo tanto em situações de trabalho
+   quanto de relacionamento). Descreva o padrão observado em linguagem simples e
+   formule como pergunta aberta para reflexão do usuário — NÃO atribua um nome de
+   schema ou rótulo clínico de nenhuma taxonomia, e não apresente como conclusão
+   fechada.
+5. Correlação entre hábitos rastreados e humor/estresse (ex: dias com menos sono
    coincidem com mais estresse relatado?).
-4. Evolução perceptível ao longo do período (se houver).
-5. Pontos que podem ser úteis levar para uma sessão de terapia.
+6. Evolução perceptível ao longo do período (se houver).
+7. Pontos que podem ser úteis levar para uma sessão de terapia.
 
-Não faça diagnósticos. Seja objetivo.
+Não faça diagnósticos nem atribua rótulos de schema/crença nuclear. Seja objetivo.
 
 Dados estruturados (hábitos):
 """

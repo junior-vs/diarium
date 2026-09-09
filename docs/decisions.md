@@ -1,6 +1,7 @@
 # Registro de Decisões Técnicas (ADR)
 
 ## ADR-001: Markdown como formato de entrada e saída
+
 **Data:** 2026-09-03
 **Decisão:** Usar markdown puro como formato de entrada (diário) e saída (análise/relatório).
 **Motivo:** Compatibilidade nativa com Obsidian, sem necessidade de banco de dados ou
@@ -8,6 +9,7 @@ formato proprietário. Facilita versionamento (git) e portabilidade.
 **Alternativas consideradas:** Banco de dados local (SQLite), formato JSON estruturado.
 
 ## ADR-002: CLI sob demanda em vez de watch automático (v1)
+
 **Data:** 2026-09-03
 **Decisão:** v1 processa arquivos sob demanda via comando manual.
 **Motivo:** Reduz complexidade inicial, evita dependência de processo em background,
@@ -15,6 +17,7 @@ dá controle explícito sobre quando enviar dados sensíveis à API externa.
 **Revisão futura:** Watch automático fica no roadmap (ver roadmap.md).
 
 ## ADR-003: LLM Adapter (abstração de provedor)
+
 **Data:** 2026-09-03
 **Decisão:** Isolar chamadas ao LLM atrás de uma interface comum (adapter pattern).
 **Motivo:** Requisito explícito de migração futura para modelo local (Ollama), sem
@@ -23,11 +26,13 @@ acoplar o core do sistema a uma API específica.
 não no core.
 
 ## ADR-004: Sem interface gráfica própria (v1)
+
 **Data:** 2026-09-03
 **Decisão:** Obsidian atua como front-end de escrita/leitura; sistema é CLI puro.
 **Motivo:** Foco do v1 é validar o motor de processamento LLM, não a experiência de UI.
 
 ## ADR-005: Template orientado a baixa carga cognitiva (design para TDAH)
+
 **Data:** 2026-09-03
 **Decisão:** Substituir o modelo narrativo original (5 seções abertas, ABC/ABCDE obrigatório)
 por um template com: brain dump livre, prompts fixos curtos divididos em manhã/noite, e
@@ -39,6 +44,7 @@ altas, o que reduz adesão em perfil TDAH. Prompts fixos e baixa barreira de ent
 sem exigir estrutura completa (ver prompts.md).
 
 ## ADR-006: Tracking de hábitos via front-matter estruturado
+
 **Data:** 2026-09-03
 **Decisão:** Rastrear hábitos (sono, estresse, energia/humor, hidratação, sol da manhã,
 atividade física, leitura, estudo, MIT) como campos de front-matter, não como texto livre.
@@ -51,6 +57,7 @@ dispositivo (celular/smartwatch) em vez de digitação manual, quando disponíve
 descartado por gerar custo extra e risco de inconsistência na extração.
 
 ## ADR-007: Sem tabela de check-in redundante com front-matter
+
 **Data:** 2026-09-03
 **Decisão:** Manter os campos de hábito apenas uma vez no documento (checklist inline
 próximo ao topo), refletindo os mesmos valores do front-matter, em vez de duplicar em
@@ -59,6 +66,7 @@ uma tabela visual separada.
 duplicado, o que vai contra o princípio de baixa fricção (ADR-005).
 
 ## ADR-009: Separação core + CLI desde o MVP
+
 **Data:** 2026-09-03
 **Decisão:** Estruturar o projeto Python em `core/` (lógica de negócio: parser, análise,
 relatório, LLM adapter) separado de `cli/` (ponto de entrada). CLI chama apenas `core/`,
@@ -70,6 +78,7 @@ a lógica de análise quando um segundo ponto de entrada for adicionado.
 porque lógica de negócio tende a vazar para dentro do CLI se não isolada desde o início.
 
 ## ADR-010: Saída estruturada (JSON) do LLM, não texto livre
+
 **Data:** 2026-09-03
 **Decisão:** O `LLMAdapter` retorna dados estruturados (validados via Pydantic), usando
 JSON schema / function calling do provedor, em vez de texto livre parseado por regex.
@@ -80,6 +89,7 @@ deve falhar de forma explícita, não ser aceita "quase certa".
 schema/function definido, não apenas texto de instrução solto.
 
 ## ADR-011: Gemini como primeiro provedor de LLM
+
 **Data:** 2026-09-03
 **Decisão:** Implementar `GeminiAdapter` como primeira implementação concreta de
 `LLMAdapter` (via SDK `google-generativeai`), suportando saída estruturada nativamente.
@@ -90,6 +100,7 @@ novo adapter implementando a mesma interface — sem alterar os casos de uso ou 
 domínio.
 
 ## ADR-012: Uso mínimo de plugins de terceiros no Obsidian
+
 **Data:** 2026-09-03
 **Decisão:** Configuração do vault prioriza plugins core (Daily notes, Templates, Tags,
 Search, Backlinks), evitando Dataview, Templater e afins.
@@ -97,6 +108,7 @@ Search, Backlinks), evitando Dataview, Templater e afins.
 apenas como editor/visualizador. Reduz superfície de dependência e manutenção.
 
 ## ADR-013: Status da entrada e atualizações determinísticas por append
+
 **Data:** 2026-09-03
 **Decisão:** O status canônico da nota diária passa a ser `processado`. Ao atualizar notas
 ou saídas geradas, o sistema deve preservar o conteúdo existente e anexar novas seções
@@ -105,6 +117,7 @@ determinísticas no fim do arquivo, em vez de reescrever o documento inteiro.
 reduz risco de perda de conteúdo autoral ao registrar novas análises ou notas geradas.
 
 ## ADR-014: Layout canônico do vault por ano e mês
+
 **Data:** 2026-09-03
 **Decisão:** O layout canônico do vault passa a ser `diary/YYYY/MMMM` para notas diárias e
 `analyses/YYYY/MMMM` para análises e relatórios.
@@ -112,6 +125,7 @@ reduz risco de perda de conteúdo autoral ao registrar novas análises ou notas 
 mantém os arquivos agrupados por período e simplifica a filtragem do CLI por intervalo.
 
 ## ADR-015: Relatórios e análises a partir das notas brutas
+
 **Data:** 2026-09-03
 **Decisão:** O CLI deve usar as notas brutas como fonte de verdade para gerar análises e
 relatórios. Ao encontrar saídas pré-existentes, deve avisar o usuário e regenerar o conteúdo
@@ -120,6 +134,7 @@ a partir das notas de origem, em vez de depender das saídas antigas como base p
 consolidação reflita a versão mais recente das entradas do diário.
 
 ## ADR-016: Prompts como ativos de código versionados separadamente
+
 **Data:** 2026-09-03
 **Decisão:** Os prompts deixam de ser tratados como texto narrativo genérico de documentação e
 passam a ser considerados ativos de fonte, versionados separadamente da implementação.
@@ -127,6 +142,7 @@ passam a ser considerados ativos de fonte, versionados separadamente da implemen
 auditáveis sem se misturar a refatorações de código.
 
 ## ADR-017: Adapter primeiro com implementação fake para testes
+
 **Data:** 2026-09-03
 **Decisão:** A primeira etapa de integração do LLM deve priorizar o adapter com uma
 implementação fake/mock para testes, antes de conectar o provedor real.
@@ -134,6 +150,7 @@ implementação fake/mock para testes, antes de conectar o provedor real.
 custo e ruído durante a construção do core.
 
 ## ADR-018: Bloco de gatilho repetível e timestampado
+
 **Data:** 2026-09-06
 **Decisão:** A seção "Registro de Gatilho" deixa de ser única e opcional por nota diária
 e passa a ser um bloco repetível, inserido com timestamp a qualquer momento do dia
@@ -151,6 +168,7 @@ dia) e a necessidade de timestamp por ocorrência. Não introduz plugin novo nem
 (mantém ADR-002 e ADR-012): usa "Insert template" nativo com hotkey, aplicado com o
 cursor já posicionado na nota do dia em aberto.
 **Impacto em outros artefatos:**
+
 - `template-diario.md`: seção de gatilho vira exemplo de bloco repetível.
 - Novo `templates/gatilho-rapido.md`: template parcial para inserção pontual.
 - `prompts.md` §2: prompt de análise deve assumir N blocos de gatilho por entrada,
@@ -162,6 +180,7 @@ Nota separada por gatilho (fora da nota do dia) — descartado por fragmentar a 
 verdade e complicar o parsing do CLI sem ganho claro sobre o append timestampado.
 
 ## ADR-019: Campo "Comportamento" no bloco de gatilho
+
 **Data:** 2026-09-06
 **Decisão:** O bloco de gatilho (ver ADR-018) ganha um quarto campo, "Comportamento",
 registrando o que a pessoa fez ou evitou fazer em resposta ao evento/pensamento/emoção.
@@ -187,6 +206,7 @@ Evento/Pensamento — descartado por já ter sido a motivação de ADR-010 (dado
 explícito em texto não solicitado.
 
 ## ADR-020: Dispute (D) como perguntas socráticas, não resposta pronta
+
 **Data:** 2026-09-06
 **Decisão:** Por padrão, o LLM Adapter não resolve o campo D (Dispute) do ABCDE com uma
 resposta pronta. Em vez disso, gera de 2 a 3 perguntas socráticas abertas por bloco de
@@ -211,6 +231,7 @@ e por reduzir o valor do dado levado à sessão de terapia (RF04, critério de s
 usuário identificado na entrevista JTBD).
 
 ## ADR-021: Observação de tema recorrente em vez de rotulagem de schema
+
 **Data:** 2026-09-06
 **Decisão:** O relatório consolidado pode evidenciar que o mesmo conteúdo de crença
 aparece em situações/entradas superficialmente diferentes ao longo do período, mas o
@@ -235,6 +256,7 @@ converter observação em rótulo clínico, contrariando a postura de não-diagn
 estabelecida no projeto (seção 9 de `theoretical-background.md`, AGENTS.md).
 
 ## ADR-022: Triagem de risco separada da análise TCC, com resposta de segurança determinística
+
 **Data:** 2026-09-06
 **Decisão:** O `LLMAdapter` ganha um método dedicado de triagem de risco (ex:
 `screen_risk(text) -> RiskScreeningResult`), executado ANTES e independentemente de
@@ -253,6 +275,7 @@ ser gerado pelo LLM a cada chamada: precisa ser fixo, revisado previamente, e
 controlado pelo código, para garantir consistência e evitar respostas inadequadas ou
 alarmistas.
 **Implicação:**
+
 - Novo campo estruturado para o resultado de triagem (schema irmão de `AnalysisResult`,
   validado via Pydantic, ver ADR-010).
 - Limiar de decisão deliberadamente conservador (favorece falso positivo sobre falso

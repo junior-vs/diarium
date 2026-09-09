@@ -52,5 +52,6 @@ def generate_period_report(
 		analyses,
 		[build_entry_payload(entry) for entry in entries],
 	)
+	report = _apply_min_data_guard(report, len(entries))
 	report_path = repo.save_report(start_date, end_date, report, entries)
 	return report, report_path

@@ -1,30 +1,41 @@
 # diarium-app
 
-CLI que lê entradas de diário em Markdown (Obsidian), envia para um LLM aplicando
-uma abordagem de TCC (Terapia Cognitivo-Comportamental) e gera análises individuais
-e relatórios consolidados por período.
+CLI que lê registros de diário em Markdown no [Obsidian](https://obsidian.md), processa o conteúdo através de um LLM configurável aplicando a abordagem da **TCC (Terapia Cognitivo-Comportamental)** e gera análises individuais, relatórios de período e relatórios longitudinais de tendência.
 
-> Este sistema não substitui acompanhamento profissional. É uma ferramenta de apoio
-> ao autoconhecimento e ao processo terapêutico.
+> [!IMPORTANT]
+> **Limite de Papel (RF18):** Este sistema **NÃO é uma ferramenta clínica de diagnóstico** e **NÃO substitui psicoterapia ou atendimento psiquiátrico profissional**. Toda saída do sistema tem caráter estritamente reflexivo e de hipótese para investigação colaborativa (inclusive com o psicólogo do usuário), terminando em um rodapé fixo incondicional.
+
+---
 
 ## Sumário
 
 - [Requisitos](#requisitos)
 - [Instalação](#instalação)
 - [Configuração (.env)](#configuração-env)
-- [Estrutura esperada do vault](#estrutura-esperada-do-vault)
+- [Estrutura do Vault e Templates](#estrutura-do-vault-e-templates)
 - [Uso da CLI](#uso-da-cli)
-  - [`analisar`](#analisar)
-  - [`relatorio`](#relatorio)
-- [Reaproveitamento de análises](#reaproveitamento-de-análises)
-- [Providers de LLM suportados](#providers-de-llm-suportados)
-- [Rodando os testes](#rodando-os-testes)
-- [Arquitetura](#arquitetura)
+  - [`analisar` (Análise Individual)](#analisar)
+  - [`relatorio` (Relatório de Período e Presets)](#relatorio)
+  - [`tendencia` (Relatório Longitudinal de Tendência)](#tendencia)
+- [Salvaguardas Clínicas e Determinísticas](#salvaguardas-clínicas-e-determinísticas)
+  - [Triagem de Risco Independente (RF15 / ADR-022)](#triagem-de-risco-independente-rf15--adr-022)
+  - [Modelo ABCDE com Perguntas Socráticas (ADR-018, 019, 020)](#modelo-abcde-com-perguntas-socráticas-adr-018-019-020)
+  - [Guarda de Dados Mínimos (RF09)](#guarda-de-dados-mínimos-rf09)
+  - [Tema Recorrente sem Rótulo Clínico (RF14 / ADR-021)](#tema-recorrente-sem-rótulo-clínico-rf14--adr-021)
+  - [Rodapé Fixo Incondicional (RF18)](#rodapé-fixo-incondicional-rf18)
+- [Reaproveitamento de Análises](#reaproveitamento-de-análises)
+- [Providers de LLM Suportados](#providers-de-llm-suportados)
+- [Rodando os Testes](#rodando-os-testes)
+- [Arquitetura e Documentação](#arquitetura-e-documentação)
+
+---
 
 ## Requisitos
 
 - Python >= 3.11
 - [uv](https://docs.astral.sh/uv/) para gerenciamento de dependências e ambiente
+
+---
 
 ## Instalação
 
@@ -33,45 +44,47 @@ cd diarium-app
 uv sync
 ```
 
-Isso cria o ambiente virtual e instala todas as dependências (`pydantic`,
-`python-frontmatter`, `typer`, `google-genai`, etc.) declaradas no `pyproject.toml`.
+Isso cria o ambiente virtual e instala as dependências (`pydantic`, `pydantic-settings`, `python-frontmatter`, `typer`, `google-genai`, etc.) declaradas no `pyproject.toml`.
 
-Para rodar qualquer comando dentro do ambiente do projeto, prefixe com `uv run`:
+Para executar qualquer comando no ambiente virtual, use o prefixo `uv run`:
 
 ```bash
 uv run diario-tcc --help
 ```
 
-(O mesmo binário também está registrado como `diarium-app` — os dois nomes
-apontam para o mesmo entrypoint.)
+*(O entrypoint também pode ser invocado como `diarium-app`.)*
+
+---
 
 ## Configuração (.env)
 
-O app lê configurações de variáveis de ambiente com prefixo `DIARIUM_`, carregadas
-automaticamente de um arquivo `.env` na raiz de `diarium-app/` (já coberto pelo
-`.gitignore` — não versionar segredos).
+O aplicativo lê configurações de variáveis de ambiente com prefixo `DIARIUM_`, carregadas automaticamente de um arquivo `.env` na pasta `diarium-app/`:
 
 | Variável | Obrigatória | Default | Descrição |
-|---|---|---|---|
-| `DIARIUM_LLM_PROVIDER` | Não | `fake` | Provider de LLM: `fake` (testes/dry-run, sem chamada externa) ou `gemini`. |
-| `DIARIUM_LLM_API_KEY` | Sim, se `llm_provider=gemini` | — | Chave de API do provider escolhido. |
-| `DIARIUM_LLM_MODEL` | Não | default do provider (`gemini-2.5-flash` para Gemini) | Sobrepõe o modelo usado pelo provider ativo. |
-| `DIARIUM_VAULT_PATH` | Não | `../diarium-vault` (relativo ao pacote) | Caminho raiz do vault Obsidian. |
+| --- | --- | --- | --- |
+| `DIARIUM_LLM_PROVIDER` | Não | `fake` | Provider de LLM: `fake` (testes/dry-run, offline) ou `gemini`. |
+| `DIARIUM_LLM_API_KEY` | Sim (se `gemini`) | — | Chave de API do provedor. |
+| `DIARIUM_LLM_MODEL` | Não | `gemini-2.5-flash` | Modelo do provider ativo. |
+| `DIARIUM_VAULT_PATH` | Não | `../diarium-vault` | Caminho raiz do vault Obsidian. |
 
 Exemplo de `.env`:
+
 ```dotenv
 DIARIUM_LLM_PROVIDER=gemini
-DIARIUM_LLM_API_KEY=coloque-sua-chave-aqui
+DIARIUM_LLM_API_KEY=AIzaSy...
 DIARIUM_LLM_MODEL=gemini-2.5-flash
 DIARIUM_VAULT_PATH=/caminho/para/diarium-vault
 ```
 
-Qualquer uma dessas variáveis também pode ser sobreposta por flag de linha de
-comando (ver [Uso da CLI](#uso-da-cli)) — a flag tem prioridade sobre o `.env`.
+As variáveis de ambiente também podem ser sobrepostas pontualmente através de flags na linha de comando (`--provider`, `--api-key`, `--model`, `--vault-path`).
 
-## Estrutura esperada do vault
+---
 
-```
+## Estrutura do Vault e Templates
+
+O sistema segue convenções estritas de Markdown puro (ADR-001) sem banco de dados intermediário:
+
+```plan-text
 <vault>/
   diary/
     2026/
@@ -83,121 +96,197 @@ comando (ver [Uso da CLI](#uso-da-cli)) — a flag tem prioridade sobre o `.env`
       09/
         2026-09-03-analise.md
         2026-09-relatorio.md
+      2026-07-01_2026-09-30-tendencia.md
 ```
 
-- `diary/AAAA/MM/AAAA-MM-DD.md` — entradas brutas escritas pelo usuário no Obsidian.
-- `analyses/AAAA/MM/` — saída gerada pela CLI: uma análise por entrada e um
-  relatório consolidado por mês/período.
+### Formato da Nota de Entrada (`diary/AAAA/MM/AAAA-MM-DD.md`)
 
-Cada entrada de diário precisa ter front-matter YAML com (no mínimo) o campo
-`data`; os demais campos de hábito são opcionais e tolerados ausentes:
+As notas diárias contêm front-matter YAML estruturado para variáveis de contexto (hábitos, ativação comportamental e positive data log):
 
 ```yaml
 ---
 data: 2026-09-03
 tags: [diario]
 processado: false
-mit: tarefa importante do dia
-sono: 7
+mit: Finalizar proposta de arquitetura
+sono: 7.5
 estresse: 3
 energia_humor: 4
 hidratacao: 6
 sol_manha: true
-atividade_fisica: false
-leitura: true
-estudo: false
+atividade_fisica: true
+leitura: false
+estudo: true
+atividade_significativa:
+  descricao: Caminhada no parque com amigos
+  prazer: 4
+  dominio: 3
+positive_data_log: Consegui manter a calma durante a apresentação técnica.
 ---
 
 ## Brain Dump
-Texto livre da entrada...
+Hoje o dia começou um pouco tenso, com receio da apresentação...
+
+### 14:30 — Gatilho
+- **Evento:** O diretor fez uma pergunta inesperada sobre o cronograma.
+- **Pensamento:** Eu deveria ter previsto isso, vou parecer despreparado.
+- **Emoção:** Ansiedade (7/10), calor no peito.
+- **Comportamento:** Pedi desculpas excessivas e apressei a resposta.
 ```
 
-Ver [`docs/template-diario.md`](../docs/template-diario.md) para o template completo
-usado no plugin Templates do Obsidian, e
-[`docs/obsidian-setup.md`](../docs/obsidian-setup.md) para a configuração do vault.
+---
 
 ## Uso da CLI
 
 ### `analisar`
 
-Analisa uma única entrada de diário e grava o resultado em `analyses/`.
+Processa uma única entrada de diário, executando triagem de risco e análise TCC.
 
-```bash
-uv run diario-tcc analisar <caminho/para/entrada.md>
-```
-
-Exemplo:
 ```bash
 uv run diario-tcc analisar /caminho/vault/diary/2026/09/2026-09-03.md
 ```
 
-O comando imprime o caminho do arquivo de análise gerado e atualiza a nota de
-origem, marcando `processado: true` e inserindo uma seção de resumo.
+**O que o comando faz:**
 
-**Flags disponíveis** (todas opcionais, sobrepõem o `.env`):
+1. Executa a **triagem de risco independente** (RF15). Se houver indício de crise, insere deterministicamente o bloco de segurança estático no topo da saída.
+2. Identifica possíveis **distorções cognitivas**, citando o trecho correspondente (RF03).
+3. Estrutura cada bloco de gatilho timestampado no modelo **ABC/ABCDE**, mantendo o campo Comportamento e gerando 2 a 3 **perguntas socráticas abertas** no Dispute (D), deixando o Efeito (E) em aberto (RF04 / ADR-018, 019, 020).
+4. Grava a análise em `analyses/AAAA/MM/AAAA-MM-DD-analise.md` com o rodapé fixo de RF18.
+5. Atualiza a nota de diário original, marcando `processado: true` e anexando um resumo da análise com link bidirecional (ADR-008).
 
-| Flag | Descrição |
-|---|---|
-| `--provider` | Provider de LLM (`fake` ou `gemini`). |
-| `--api-key` | Chave de API do provider. |
-| `--model` | Modelo do provider. |
-| `--vault-path` | Caminho raiz do vault. |
+---
 
 ### `relatorio`
 
-Gera um relatório consolidado para um intervalo de datas, cobrindo todas as
-entradas de diário nesse período.
+Gera um relatório consolidado por período a partir de múltiplas notas diárias.
 
 ```bash
+# Via intervalo explícito
 uv run diario-tcc relatorio --de 2026-09-01 --ate 2026-09-30
+
+# Via preset de conveniência (diario, semanal, mensal, trimestral, semestral, anual)
+uv run diario-tcc relatorio --preset mensal --referencia 2026-09-15
+uv run diario-tcc relatorio --preset semanal
 ```
 
 **Flags disponíveis:**
 
-| Flag | Obrigatória | Descrição |
-|---|---|---|
-| `--de` | Sim | Data inicial do período (`AAAA-MM-DD`). |
-| `--ate` | Sim | Data final do período (`AAAA-MM-DD`). |
-| `--provider` | Não | Provider de LLM. |
-| `--api-key` | Não | Chave de API do provider. |
-| `--model` | Não | Modelo do provider. |
-| `--vault-path` | Não | Caminho raiz do vault. |
-| `--forcar` | Não | Recalcula todas as análises do período, ignorando análises já persistidas. |
+| Flag | Descrição |
+| --- | --- |
+| `--de` | Data inicial (`AAAA-MM-DD`). |
+| `--ate` | Data final (`AAAA-MM-DD`). |
+| `--preset` | Preset de conveniência: `diario`, `semanal`, `mensal`, `trimestral`, `semestral`, `anual`. |
+| `--referencia` | Data de referência para o cálculo do preset (padrão: data de hoje). |
+| `--forcar` | Recalcula todas as análises individuais do período, ignorando persistências anteriores. |
+| `--tendencia` | Força a execução como relatório de tendência agregada sobre sub-períodos. |
 
-## Reaproveitamento de análises
+> [!TIP]
+> **Detecção Automática de Tendência:** Se o intervalo informado (ou derivado do preset) ultrapassar **45 dias** (ex: presets `trimestral`, `semestral`, `anual`), o comando `relatorio` automaticamente gera um **Relatório de Tendência** sobre os sub-períodos já processados (RF07).
 
-`relatorio` reaproveita automaticamente a análise já existente de cada entrada
-(quando o arquivo de análise correspondente já foi gerado), evitando chamar o
-LLM novamente para entradas já processadas. Use `--forcar` para ignorar esse
-cache e recalcular tudo — por exemplo, depois de trocar de provider/modelo e
-querer análises consistentes com o novo LLM.
+---
 
-## Providers de LLM suportados
+### `tendencia`
 
-- **`fake`** — `FakeLLMAdapter`, não faz chamadas externas; útil para testar o
-  fluxo de ponta a ponta (CLI, leitura/escrita do vault) sem custo ou chave de API.
-- **`gemini`** — `GeminiAdapter`, usa a API do Google Gemini (`google-genai`) com
-  saída estruturada validada por schema Pydantic.
-
-Suporte a **OpenAI** está desenhado mas ainda não implementado — o registro de
-providers em `config.py` é extensível via `register_provider(nome, factory)` sem
-precisar alterar o código existente; ver comentário em `config.py` para os
-passos de adição.
-
-## Rodando os testes
+Gera um relatório longitudinal comparativo agregando sobre **sub-períodos mensais já processados** (não entradas brutas), evidenciando variações de padrões ao longo do tempo.
 
 ```bash
-uv run pytest -q
+uv run diario-tcc tendencia --preset trimestral --referencia 2026-09-15
+uv run diario-tcc tendencia --de 2026-01-01 --ate 2026-06-30
 ```
 
-Lint estático (opcional, requer `ruff` instalado):
+**Comportamento:**
+
+- Decompõe o período em meses civis (`AAAA-MM`).
+- Localiza relatórios consolidados mensais pré-existentes.
+- **Identificação de faltantes (RF08):** Se algum sub-período do intervalo não tiver sido processado, ele é listado explicitamente na seção `### Sub-períodos ausentes`, sem mascarar dados incompletos.
+- **Variação de padrões (RF07 / RNF07):** Apresenta variações de distorções e correlações em linguagem epistêmica observada (ex: *"A distorção X apareceu com mais frequência em 2026-01 do que nos demais sub-períodos"*), sem afirmações causais ou diagnósticas.
+
+---
+
+## Salvaguardas Clínicas e Determinísticas
+
+O `diarium` foi desenhado sob princípios rigorosos para evitar riscos éticos de ferramentas de IA em saúde mental:
+
+### Triagem de Risco Independente (RF15 / ADR-022)
+
+A verificação de ideação suicida ou desesperança grave ocorre em uma chamada isolada (`screen_risk`), executada **antes** e de forma independente da análise TCC. Quando detectado possível risco:
+
+- O sistema insere no topo do arquivo o conteúdo estático versionado de [`docs/bloco-seguranca.md`](../docs/bloco-seguranca.md), contendo contatos como o CVV (188) e SAMU (192).
+- Essa inserção é feita **por código**, nunca gerada por IA.
+- A análise normal do diário é mantida integralmente abaixo do bloco de segurança.
+
+### Modelo ABCDE com Perguntas Socráticas (ADR-018, 019, 020)
+
+- Suporte a múltiplos blocos de gatilhos por dia, cada um timestampado (`### HH:MM — Gatilho`).
+- Campo **Comportamento** explícito (evitação / comportamento de segurança).
+- O campo **Dispute (D)** não recebe respostas prontas da IA; são geradas 2 a 3 **perguntas socráticas abertas** que convidam o usuário a examinar a própria crença.
+- O campo **Effect (E)** permanece em aberto por padrão.
+
+### Guarda de Dados Mínimos (RF09)
+
+Correlações hábito × humor (RF13) e temas recorrentes (RF14) dependem de acúmulo de dados para terem valor. Se o período contiver **menos de 5 entradas**, o sistema aplica uma guarda determinística no código, exibindo explicitamente:
+`"- Dados insuficientes para identificar tema recorrente (mínimo de entradas não atingido)."`
+
+### Tema Recorrente sem Rótulo Clínico (RF14 / ADR-021)
+
+O relatório identifica temas transversais entre diferentes situações, mas os formula sempre como **perguntas abertas para reflexão**, nunca atribuindo rótulos diagnósticos ou nomes de taxonomias clínicas (como esquemas desadaptativos precoces).
+
+### Rodapé Fixo Incondicional (RF18)
+
+Todas as saídas (`analisar`, `relatorio`, `tendencia`) incluem o rodapé incondicional versionado em [`docs/rodape.md`](../docs/rodape.md), reforçando o limite de papel da ferramenta e que ela não substitui profissionais qualificados.
+
+---
+
+## Reaproveitamento de Análises
+
+O comando `relatorio` verifica se a entrada diária já possui uma análise correspondente em `analyses/` com carga útil (`analysis_json`) válida. Em caso positivo, reutiliza o resultado existente, economizando tokens e chamadas à API. Para forçar o reprocessamento completo, utilize a flag `--forcar`.
+
+---
+
+## Providers de LLM Suportados
+
+- **`fake`**: `FakeLLMAdapter`, ideal para desenvolvimento e testes automatizados. Roda 100% local e sem chamadas de rede.
+- **`gemini`**: `GeminiAdapter`, integra com o Google Gemini (`google-genai`) usando JSON schema estruturado via Pydantic para `AnalysisResult`, `ReportResult` e `RiskScreeningResponse`.
+
+O registro em `config.py` segue o princípio Aberto/Fechado (OCP): novos provedores (ex: OpenAI, Ollama) podem ser registrados via `register_provider` sem modificar o core da aplicação.
+
+---
+
+## Rodando os Testes
+
+A suíte completa de testes unitários e de integração cobre todas as regras de negócio, formatters puros, repositório, CLI e sincronismo dos prompts:
+
 ```bash
-ruff check src
+uv run pytest
 ```
 
-## Arquitetura
+Para rodar com verbosidade:
 
-O código segue Clean Architecture com camadas `domain/`, `ports/`, `formatters/`
-(funções puras), `use_cases/`, `infrastructure/` e `cli/` (composition root).
-Detalhes em [`docs/architecture.md`](../docs/architecture.md) e nas decisões
-técnicas em [`docs/decisions.md`](../docs/decisions.md).
+```bash
+uv run pytest -v
+```
+
+---
+
+## Arquitetura e Documentação
+
+O projeto implementa **Clean Architecture**:
+
+- `domain/`: Modelos Pydantic ricos (`EntryData`, `HabitData`, `AnalysisResult`, `ReportResult`, `TrendReportResult`) e funções puras de data/período.
+- `ports/`: Interfaces abstratas (`LLMAdapter`, `EntryRepository`).
+- `formatters/`: Funções estritamente puras para renderização em Markdown (`analysis_markdown`, `report_markdown`, `trend_markdown`, `source_note`).
+- `use_cases/`: Casos de uso específicos (`analyze_entry`, `generate_period_report`, `generate_trend_report`).
+- `infrastructure/`: Implementações concretas de repositório de arquivos (`FileSystemEntryRepository`), adaptadores de LLM (`GeminiAdapter`, `FakeLLMAdapter`) e carregadores de assets e prompts.
+- `cli/`: Ponto de composição e comandos Typer (`main.py`).
+
+Documentos complementares no diretório `docs/`:
+
+- [`specification.md`](../docs/specification.md) — Requisitos funcionais (RF01–RF18) e não-funcionais (RNF01–RNF07).
+- [`architecture.md`](../docs/architecture.md) — Visão técnica detalhada e decisões arquiteturais.
+- [`decisions.md`](../docs/decisions.md) — Registro de Decisões de Arquitetura (ADRs 001 a 022).
+- [`prompts.md`](../docs/prompts.md) — Biblioteca normativa de prompts TCC.
+- [`template-diario.md`](../docs/template-diario.md) — Template de entrada diária para o Obsidian.
+- [`obsidian-setup.md`](../docs/obsidian-setup.md) — Guia de configuração do Obsidian e plugins.
+- [`bloco-seguranca.md`](../docs/bloco-seguranca.md) — Conteúdo fixo de segurança para triagem de risco (RF15).
+- [`rodape.md`](../docs/rodape.md) — Texto fixo de limite de papel (RF18).
+- [`roadmap.md`](../docs/roadmap.md) — Evolução planejada do projeto.
