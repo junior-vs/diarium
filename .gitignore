@@ -296,3 +296,5 @@ pip-selfcheck.json
 .history
 .ionide
 
+.agents
+.github
