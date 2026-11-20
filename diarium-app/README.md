@@ -1,6 +1,6 @@
 # diarium-app
 
-CLI que lê registros de diário em Markdown no [Obsidian](https://obsidian.md), processa o conteúdo através de um LLM configurável aplicando a abordagem da **TCC (Terapia Cognitivo-Comportamental)** e gera análises individuais, relatórios de período e relatórios longitudinais de tendência.
+CLI que lê registros de diário em Markdown gerados por qualquer ferramenta (incluindo [Obsidian](https://obsidian.md) como opção), processa o conteúdo através de um LLM configurável aplicando a abordagem da **TCC (Terapia Cognitivo-Comportamental)** e gera análises individuais, relatórios de período e relatórios longitudinais de tendência.
 
 > [!IMPORTANT]
 > **Limite de Papel (RF18):** Este sistema **NÃO é uma ferramenta clínica de diagnóstico** e **NÃO substitui psicoterapia ou atendimento psiquiátrico profissional**. Toda saída do sistema tem caráter estritamente reflexivo e de hipótese para investigação colaborativa (inclusive com o psicólogo do usuário), terminando em um rodapé fixo incondicional.
@@ -65,7 +65,7 @@ O aplicativo lê configurações de variáveis de ambiente com prefixo `DIARIUM_
 | `DIARIUM_LLM_PROVIDER` | Não | `fake` | Provider de LLM: `fake` (testes/dry-run, offline) ou `gemini`. |
 | `DIARIUM_LLM_API_KEY` | Sim (se `gemini`) | — | Chave de API do provedor. |
 | `DIARIUM_LLM_MODEL` | Não | `gemini-2.5-flash` | Modelo do provider ativo. |
-| `DIARIUM_VAULT_PATH` | Não | `../diarium-vault` | Caminho raiz do vault Obsidian. |
+| `DIARIUM_VAULT_PATH` | Não | `../diarium-vault` | Caminho raiz do workspace Markdown (estrutura `diary/` e `analyses/`). |
 
 Exemplo de `.env`:
 
@@ -283,10 +283,10 @@ Documentos complementares no diretório `docs/`:
 
 - [`specification.md`](../docs/specification.md) — Requisitos funcionais (RF01–RF18) e não-funcionais (RNF01–RNF07).
 - [`architecture.md`](../docs/architecture.md) — Visão técnica detalhada e decisões arquiteturais.
-- [`decisions.md`](../docs/decisions.md) — Registro de Decisões de Arquitetura (ADRs 001 a 022).
+- [`decisions.md`](../docs/decisions.md) — Registro de Decisões de Arquitetura (ADRs 001 a 023).
 - [`prompts.md`](../docs/prompts.md) — Biblioteca normativa de prompts TCC.
-- [`template-diario.md`](../docs/template-diario.md) — Template de entrada diária para o Obsidian.
-- [`obsidian-setup.md`](../docs/obsidian-setup.md) — Guia de configuração do Obsidian e plugins.
+- [`template-diario.md`](../docs/template-diario.md) — Template de entrada diária em Markdown.
+- [`obsidian-setup.md`](../docs/obsidian-setup.md) — Guia opcional de configuração para uso com Obsidian.
 - [`bloco-seguranca.md`](../docs/bloco-seguranca.md) — Conteúdo fixo de segurança para triagem de risco (RF15).
 - [`rodape.md`](../docs/rodape.md) — Texto fixo de limite de papel (RF18).
 - [`roadmap.md`](../docs/roadmap.md) — Evolução planejada do projeto.

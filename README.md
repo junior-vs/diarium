@@ -1,7 +1,7 @@
 # Diário TCC Assistido por LLM
 
-Sistema para processar diários pessoais (escritos em Markdown no Obsidian) usando um LLM,
-aplicando abordagem TCC (Terapia Cognitivo-Comportamental).
+Sistema para processar diários pessoais em Markdown usando um LLM, aplicando abordagem
+TCC (Terapia Cognitivo-Comportamental).
 
 ## O que faz
 - Lê entradas de diário em markdown.
@@ -27,7 +27,7 @@ Ver seção de configuração em `architecture.md` para setup de API key e prove
 - [prompts.md](./prompts.md) — biblioteca de prompts TCC
 - [decisions.md](./decisions.md) — decisões técnicas (ADR)
 - [roadmap.md](./roadmap.md) — evolução planejada
-- [obsidian-setup.md](./obsidian-setup.md) — configuração do vault no Obsidian
+- [obsidian-setup.md](./obsidian-setup.md) — guia opcional para uso com Obsidian
 
 ## Aviso
 Este sistema não substitui acompanhamento profissional. É uma ferramenta de apoio

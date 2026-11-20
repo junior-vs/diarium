@@ -2,8 +2,8 @@
 
 ## 1. Visão Geral
 
-Sistema para processar diários pessoais (escritos em Markdown no Obsidian) usando um LLM,
-aplicando abordagem TCC (Terapia Cognitivo-Comportamental) para identificar possíveis
+Sistema para processar diários pessoais em Markdown usando um LLM, aplicando abordagem TCC
+(Terapia Cognitivo-Comportamental) para identificar possíveis
 padrões de pensamento e estruturar registros no modelo ABC/ABCDE. Uso pessoal, com output
 também aproveitável pelo psicólogo do usuário.
 
@@ -47,7 +47,7 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 ### Fora do escopo (v1)
 
 - Automação/watch de pasta (ADR-002; v2).
-- App mobile/web dedicado; interface gráfica própria (usa Obsidian como front-end).
+- App mobile/web dedicado; interface gráfica própria.
 - Modelo local (Ollama) (v2).
 - Distinção entre pensamento automático pontual e processos cíclicos de
   preocupação/ruminação (Terapia Metacognitiva, Wells — §3.4). Fundamentação já
@@ -83,7 +83,7 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 | ---- | ----------- |
 | RNF01 | Dados sensíveis (diários) não devem ser persistidos fora do ambiente local do usuário, exceto na chamada à API do LLM. |
 | RNF02 | Arquitetura deve isolar a camada de LLM (adapter/interface) para permitir troca de provedor sem refatoração ampla. |
-| RNF03 | Formato de entrada/saída deve ser markdown puro, compatível com Obsidian. |
+| RNF03 | Formato de entrada/saída deve ser markdown puro, independente da ferramenta de autoria (incluindo Obsidian como opção). |
 | RNF04 | Execução via linha de comando (CLI), sem dependência de interface gráfica própria. |
 | RNF05 | O template de entrada deve minimizar carga cognitiva e função executiva exigida. Hipótese de design orientada a TDAH, não alegação de eficácia clínica (§7.2, §7.4). |
 | RNF06 | O sistema não deve se apresentar como ferramenta de resposta a emergências em tempo real — a triagem ocorre apenas quando o CLI é executado sob demanda (ADR-002). |

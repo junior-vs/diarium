@@ -4,8 +4,9 @@
 
 **Data:** 2026-09-03
 **Decisão:** Usar markdown puro como formato de entrada (diário) e saída (análise/relatório).
-**Motivo:** Compatibilidade nativa com Obsidian, sem necessidade de banco de dados ou
-formato proprietário. Facilita versionamento (git) e portabilidade.
+**Motivo:** Compatibilidade nativa com Obsidian e outras ferramentas de Markdown, sem
+necessidade de banco de dados ou formato proprietário. Facilita versionamento (git) e
+portabilidade.
 **Alternativas consideradas:** Banco de dados local (SQLite), formato JSON estruturado.
 
 ## ADR-002: CLI sob demanda em vez de watch automático (v1)
@@ -28,7 +29,7 @@ não no core.
 ## ADR-004: Sem interface gráfica própria (v1)
 
 **Data:** 2026-09-03
-**Decisão:** Obsidian atua como front-end de escrita/leitura; sistema é CLI puro.
+**Decisão:** O sistema é CLI puro e não possui interface gráfica própria no v1.
 **Motivo:** Foco do v1 é validar o motor de processamento LLM, não a experiência de UI.
 
 ## ADR-005: Template orientado a baixa carga cognitiva (design para TDAH)
@@ -99,13 +100,15 @@ ADR-010 sem lógica adicional de parsing.
 novo adapter implementando a mesma interface — sem alterar os casos de uso ou o
 domínio.
 
-## ADR-012: Uso mínimo de plugins de terceiros no Obsidian
+## ADR-012: Uso mínimo de plugins de terceiros no fluxo opcional com Obsidian
 
 **Data:** 2026-09-03
-**Decisão:** Configuração do vault prioriza plugins core (Daily notes, Templates, Tags,
-Search, Backlinks), evitando Dataview, Templater e afins.
-**Motivo:** Processamento e agregação de dados ficam no CLI externo; o Obsidian atua
-apenas como editor/visualizador. Reduz superfície de dependência e manutenção.
+**Decisão:** Quando o usuário optar por Obsidian como editor de Markdown, a configuração
+do vault prioriza plugins core (Daily notes, Templates, Tags, Search, Backlinks),
+evitando Dataview, Templater e afins.
+**Motivo:** Processamento e agregação de dados ficam no CLI externo; Obsidian, quando
+usado, atua apenas como editor/visualizador. Reduz superfície de dependência e
+manutenção.
 
 ## ADR-013: Status da entrada e atualizações determinísticas por append
 
@@ -121,8 +124,9 @@ reduz risco de perda de conteúdo autoral ao registrar novas análises ou notas 
 **Data:** 2026-09-03
 **Decisão:** O layout canônico do vault passa a ser `diary/YYYY/MMMM` para notas diárias e
 `analyses/YYYY/MMMM` para análises e relatórios.
-**Motivo:** A organização por ano e nome do mês facilita navegação manual no Obsidian,
-mantém os arquivos agrupados por período e simplifica a filtragem do CLI por intervalo.
+**Motivo:** A organização por ano e nome do mês facilita navegação manual em ferramentas
+de Markdown, mantém os arquivos agrupados por período e simplifica a filtragem do CLI por
+intervalo.
 
 ## ADR-015: Relatórios e análises a partir das notas brutas
 
@@ -291,3 +295,21 @@ de análise geral — é o comportamento atual, e é exatamente o gap que motivo
 Delegar a triagem a um classificador de risco dedicado e validado clinicamente (fora do
 LLM Adapter) — desejável a longo prazo, mas fora do escopo do MVP; fica registrado como
 direção futura (ver roadmap.md).
+
+## ADR-023: Obsidian opcional como ferramenta de autoria Markdown
+
+**Data:** 2026-11-20
+**Decisão:** O uso de Obsidian deixa de ser obrigatório. O sistema aceita entradas em
+Markdown geradas por qualquer ferramenta (editor de texto, app próprio, automações ou
+texto livre convertido para `.md`), desde que respeitem a estrutura canônica
+`diary/YYYY/MMMM` para entradas e `analyses/YYYY/MMMM` para saídas.
+**Motivo:** Remover acoplamento desnecessário a uma única ferramenta de autoria e manter
+o foco da arquitetura no processamento via CLI e no formato Markdown.
+**Implicação:**
+
+- O sistema continua sem interface gráfica própria (ADR-004).
+- `obsidian-setup.md` permanece como guia opcional para quem escolher Obsidian.
+- O layout de pastas canônico permanece inalterado (ADR-014).
+**Alternativas consideradas:** Tornar a estrutura de pastas totalmente livre nesta
+mudança — descartado por aumentar escopo e quebrar convenções de entrada/saída já
+adotadas no projeto.

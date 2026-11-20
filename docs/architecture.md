@@ -6,7 +6,7 @@ CLI que orquestra leitura de arquivos markdown, chamada a um LLM via adapter con
 e geração de arquivos markdown de saída (análise individual e relatórios consolidados).
 
 ```
-[Diário .md no Obsidian]
+[Diário .md (qualquer ferramenta)]
         │
         ▼
    [CLI Script] ──► [LLM Adapter] ──► [API do LLM]
@@ -70,7 +70,7 @@ Ponto de entrada. Comandos principais:
 ### 2.2 Leitor/Parser de Markdown
 
 Responsável por ler o arquivo do diário e extrair o conteúdo textual relevante
-(ignorando front-matter/metadados do Obsidian quando presentes).
+(ignorando front-matter/metadados quando presentes).
 
 ### 2.3 LLM Adapter
 
@@ -147,7 +147,7 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 
 - **CLI em vez de watch automático:** simplicidade v1, controle explícito do usuário. (ver decisions.md)
 - **Adapter pattern para LLM:** preparar migração futura para modelo local sem refatoração.
-- **Markdown como formato universal:** compatibilidade nativa com Obsidian, sem dependência de banco de dados.
+- **Markdown como formato universal:** compatibilidade com Obsidian e outras ferramentas, sem dependência de banco de dados.
 
 ## 6. Extensibilidade Futura
 
@@ -155,4 +155,5 @@ da resposta em estrutura de dados (distorções identificadas, ABC/ABCDE, resumo
 - Adapter para modelo local (Ollama).
 - App mobile e bot Telegram consumindo `core/` — nesse momento, `core/` provavelmente
   precisa ser exposto via API (REST/RPC), já que mobile e bot não têm acesso direto ao
-  filesystem do vault Obsidian. Isso é uma mudança de camada de acesso, não do core em si.
+  filesystem do workspace Markdown. Isso é uma mudança de camada de acesso, não do core
+  em si.
