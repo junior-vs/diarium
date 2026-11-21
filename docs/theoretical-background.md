@@ -1,6 +1,6 @@
 # Fundamentação Teórica: Diário TCC Assistido por LLM
 
-# 1. Princípios da Terapia Cognitivo-Comportamental
+## 1. Princípios da Terapia Cognitivo-Comportamental
 
 A Terapia Cognitivo-Comportamental (TCC) compreende problemas psicológicos a partir da interação entre cognições, emoções, comportamentos, respostas fisiológicas e contexto. Um princípio central da tradição cognitiva é que a maneira como uma pessoa percebe e interpreta uma situação influencia suas respostas emocionais, comportamentais e fisiológicas. Essas interpretações são influenciadas por crenças, experiências anteriores, padrões cognitivos e pelas características da própria situação.
 
@@ -8,7 +8,7 @@ Isso não significa que os acontecimentos externos sejam irrelevantes ou que o s
 
 [Beck et al., 1979; Beck, 2020; Knapp & Beck, 2008]
 
-## 1.1 Modelo cognitivo e sua evolução**
+### 1.1 Modelo cognitivo e sua evolução**
 
 No modelo cognitivo de Beck, uma situação pode produzir pensamentos automáticos, que são cognições espontâneas, frequentemente breves e não necessariamente submetidas a uma análise deliberada. Esses pensamentos podem estar associados a respostas emocionais, comportamentais e fisiológicas.
 
@@ -39,7 +39,7 @@ Isso embasa teoricamente que a intervenção ou o registro no sistema não preci
 
 [Beck et al., 1979; Beck, 2020; Beck & Haigh, 2014]
 
-## 1.2 Diferenciação entre o modelo de Beck e o modelo ABC da REBT
+### 1.2 Diferenciação entre o modelo de Beck e o modelo ABC da REBT
 
 O modelo ABC utilizado na Rational Emotive Behavior Therapy (REBT), desenvolvida por Albert Ellis, possui origem e terminologia próprias e não deve ser apresentado como se fosse simplesmente outra forma de nomear o modelo cognitivo de Beck.
 
@@ -74,7 +74,7 @@ Essa distinção é importante porque permite utilizar elementos complementares 
 
 [Ellis, 1994; Dryden, 2009; Beck et al., 1979; Beck, 2020]
 
-## 1.3 O significado de B no modelo ABC
+### 1.3 O significado de B no modelo ABC
 
 No modelo ABC de Ellis, B significa **Belief**, ou crença/avaliação, e não simplesmente “pensamento automático”.
 
@@ -110,7 +110,7 @@ Emoção / comportamento / fisiologia
 Crenças intermediárias e centrais
 ```
 
-## 1.4 Objetivo da intervenção cognitiva
+### 1.4 Objetivo da intervenção cognitiva
 
 A TCC não pressupõe que toda situação de sofrimento seja causada por um pensamento incorreto que deve ser substituído por um pensamento positivo.
 
@@ -129,21 +129,21 @@ Consequentemente, o Diarium não deve ter como objetivo identificar e “corrigi
 
 O sistema deve favorecer investigação e reavaliação, sem pressupor antecipadamente que a interpretação apresentada pelo usuário esteja errada.
 
-## 1.5 Implicações para o Diarium
+### 1.5 Implicações para o Diarium
 
 O modelo teórico não deve ser convertido diretamente em uma sequência rígida de regras.
 
 É útil distinguir três níveis:
 
-### Teoria
+#### Teoria
 
 Conceitos provenientes das diferentes abordagens cognitivo-comportamentais, como pensamentos automáticos, crenças, esquiva, reforçamento e descoberta guiada.
 
-### Evidência
+#### Evidência
 
 Resultados de estudos empíricos que sustentam determinados mecanismos ou intervenções, com diferentes graus de certeza.
 
-### Design
+#### Design
 
 Decisões específicas sobre como o Diarium implementará esses princípios, como a ordem das perguntas, quantidade de perguntas ou forma de apresentação das informações.
 
@@ -151,9 +151,9 @@ Uma decisão de design não deve ser apresentada como se fosse uma conclusão es
 
 ---
 
-# 2. Questionamento, descoberta guiada e geração ativa
+## 2. Questionamento, descoberta guiada e geração ativa
 
-## 2.1 O modelo ABCDE na REBT
+### 2.1 O modelo ABCDE na REBT
 
 O componente D, denominado **Disputation**, pertence especificamente ao modelo ABCDE da REBT.
 
@@ -173,7 +173,7 @@ não deve ser interpretado como uma descrição geral do questionamento socráti
 
 [Ellis, 1994; Dryden, 2009]
 
-## 2.2 Questionamento socrático e descoberta guiada na TCC
+### 2.2 Questionamento socrático e descoberta guiada na TCC
 
 Na tradição cognitiva de Beck, o questionamento socrático está associado ao processo de **descoberta guiada**.
 
@@ -199,7 +199,7 @@ ou ainda, focando na reavaliação de contexto:
 
 [Padesky, 1993; Kazantzis et al., 2014; Kennerley, Kirk, & Westbrook, 2017]
 
-## 2.3 Questionamento socrático não significa convencer o usuário
+### 2.3 Questionamento socrático não significa convencer o usuário
 
 O questionamento socrático não deve ser utilizado como uma técnica para conduzir o usuário até a interpretação considerada correta pelo sistema.
 
@@ -219,7 +219,7 @@ seguida, quando apropriado:
 
 A diferença é fundamental: o sistema não deve pressupor que o pensamento apresentado pelo usuário seja falso antes de investigar.
 
-## 2.4 Relação entre ABCDE e descoberta guiada no Diarium
+### 2.4 Relação entre ABCDE e descoberta guiada no Diarium
 
 O Diarium pode combinar esses elementos sem tratá-los como equivalentes.
 
@@ -247,7 +247,7 @@ Reavaliação
 
 Essa combinação deve ser apresentada como uma escolha de design teoricamente informada, e não como uma fusão dos modelos originais de Beck e Ellis.
 
-## 2.5 Geração ativa e elaboração
+### 2.5 Geração ativa e elaboração
 
 O Diarium pode favorecer situações nas quais o próprio usuário formule uma interpretação alternativa em vez de receber imediatamente uma resposta pronta do sistema.
 
@@ -267,7 +267,7 @@ Consequentemente:
 
 Essa afirmação deve permanecer explicitamente como hipótese de design, e não como mecanismo terapêutico empiricamente estabelecido.
 
-## 2.6 Geração ativa não significa que a resposta esteja correta
+### 2.6 Geração ativa não significa que a resposta esteja correta
 
 O fato de uma interpretação ser produzida pelo próprio usuário não garante sua precisão.
 
@@ -295,7 +295,7 @@ Logo está correto
 
 Isso é particularmente importante para o Diarium porque o sistema não deve incentivar a substituição de um pensamento negativo por qualquer pensamento positivo simplesmente porque este último parece mais agradável.
 
-## 2.7 Insight e experiência de “Aha”
+### 2.7 Insight e experiência de “Aha”
 
 Uma nova compreensão pode ser acompanhada por uma experiência subjetiva de insight ou de “Aha”.
 
@@ -313,7 +313,7 @@ Por isso, o Diarium deve tratar expressões como:
 
 como **relatos subjetivos de nova compreensão**, e não como indicadores clínicos de sucesso.
 
-## 2.8 Insight não substitui aprendizagem comportamental
+### 2.8 Insight não substitui aprendizagem comportamental
 
 Mesmo quando uma nova interpretação parece convincente, a mudança pode exigir novas experiências.
 
@@ -337,7 +337,7 @@ Reavaliação
 
 [Bennett-Levy et al., 2004; Beck, 2020]
 
-## 2.9 Quantidade de perguntas: princípio versus heurística
+### 2.9 Quantidade de perguntas: princípio versus heurística
 
 A literatura sobre descoberta guiada e questionamento socrático não estabelece um número fixo de perguntas que deva ser utilizado antes de uma interpretação.
 
@@ -361,7 +361,7 @@ A heurística operacional pode ser:
 
 Uma pergunta aberta não deve ser considerada automaticamente uma pergunta socrática. Sua função e seu conteúdo são mais importantes do que sua forma gramatical.
 
-## 2.10 Papel do LLM
+### 2.10 Papel do LLM
 
 O LLM pode auxiliar na formulação de perguntas exploratórias, organização das informações e identificação de possíveis relações entre os elementos relatados.
 
@@ -385,13 +385,13 @@ O objetivo é preservar o caráter exploratório da interação.
 
 ---
 
-# 3. Componente comportamental
+## 3. Componente comportamental
 
 A TCC integra princípios cognitivos e comportamentais. Embora cognições possam influenciar comportamentos, comportamentos também podem modificar o ambiente, produzir consequências e gerar novas experiências que influenciam interpretações posteriores.
 
 Por essa razão, o componente comportamental não deve ser tratado simplesmente como uma consequência dos pensamentos.
 
-## 3.1 Relações entre cognição, emoção, comportamento e contexto
+### 3.1 Relações entre cognição, emoção, comportamento e contexto
 
 A TCC não deve ser reduzida a uma sequência linear do tipo:
 
@@ -427,7 +427,7 @@ O objetivo não deve ser descobrir necessariamente “o pensamento que causou a 
 
 [Beck et al., 1979; Beck, 2020; Knapp & Beck, 2008]
 
-## 3.2 Esquiva e reforçamento negativo
+### 3.2 Esquiva e reforçamento negativo
 
 Modelos de aprendizagem ajudam a explicar por que comportamentos de esquiva podem persistir.
 
@@ -455,7 +455,7 @@ A ansiedade pode envolver diversos processos, e a manutenção de um comportamen
 
 No Diarium, o sistema deve evitar concluir automaticamente que um comportamento é esquiva apenas porque ocorreu depois de uma emoção negativa.
 
-## 3.3 Comportamentos de segurança
+### 3.3 Comportamentos de segurança
 
 Comportamentos de segurança são estratégias utilizadas em situações percebidas como ameaçadoras com a finalidade de prevenir, minimizar ou controlar uma consequência temida.
 
@@ -480,7 +480,7 @@ O objetivo é investigar o comportamento, e não impor uma formulação antecipa
 
 [Salkovskis, 1991]
 
-## 3.4 Preocupação, Ruminação e Metacognição**
+### 3.4 Preocupação, Ruminação e Metacognição**
 
 Enquanto os pensamentos automáticos tradicionais muitas vezes assumem a forma de afirmações breves sobre uma situação, a **preocupação** e a **ruminação** operam como processos contínuos e cíclicos. A preocupação é tipicamente orientada para o futuro (estilo "e se...?"), enquanto a ruminação é frequentemente orientada para o passado (focada em perdas, falhas ou no significado do próprio sofrimento).
 
@@ -502,7 +502,7 @@ O objetivo não é debater se o pensamento é verdadeiro ou falso, mas questiona
 
 *(Referência adicional a ser incluída: Wells, A. (2009). Metacognitive Therapy for Anxiety and Depression. Guilford Press).*
 
-## 3.5 Ativação comportamental
+### 3.5 Ativação comportamental
 
 A ativação comportamental demonstra a importância de intervenções que atuam diretamente sobre comportamento e contexto.
 
@@ -532,7 +532,7 @@ Essa estrutura permite observar relações entre comportamento, contexto e conse
 
 [Martell, Addis, & Jacobson, 2001; Dimidjian et al., 2006]
 
-## 3.6 Princípio funcional
+### 3.6 Princípio funcional
 
 A análise comportamental do Diarium deve privilegiar a **função do comportamento**, e não apenas sua forma.
 
@@ -554,7 +554,7 @@ Uma formulação mais apropriada seria:
 
 Dessa maneira, a interpretação comportamental permanece uma hipótese a ser investigada.
 
-## 3.7 Implicações para o Diarium
+### 3.7 Implicações para o Diarium
 
 A estrutura comportamental do Diarium deve distinguir:
 
@@ -606,7 +606,7 @@ Esses rótulos não determinam, por si mesmos, que uma interpretação seja fals
 
 O ponto clinicamente relevante é investigar **se a interpretação é sustentada pelas evidências disponíveis, se outras informações relevantes foram consideradas e quais consequências essa maneira de interpretar a situação produz naquele contexto**. A terapia cognitiva tradicionalmente envolve justamente examinar a validade e a razoabilidade das interpretações, em vez de simplesmente classificá-las como erradas.
 
-### 4.2 A identificação de padrões não equivale a uma formulação clínica
+#### 4.2 A identificação de padrões não equivale a uma formulação clínica
 
 No Diarium, a identificação de possíveis padrões de pensamento deve ser tratada como uma **hipótese de análise**, e não como uma conclusão clínica.
 
@@ -647,7 +647,7 @@ em vez de:
 * "isso é uma distorção cognitiva";
 * "seu pensamento está errado".
 
-### 4.4 Padrão cognitivo não é diagnóstico
+#### 4.4 Padrão cognitivo não é diagnóstico
 
 A ocorrência de um determinado padrão em um registro não permite inferir, isoladamente, um transtorno psicológico, uma característica estável da personalidade ou uma crença nuclear.
 
@@ -655,7 +655,7 @@ Também não é adequado interpretar a frequência de um rótulo como medida dir
 
 Por essa razão, métricas como "número de distorções identificadas" devem ser tratadas como **dados descritivos do diário**, e não como indicadores clínicos de diagnóstico ou evolução terapêutica.
 
-### 4.5 Implicação para o desenho do Diarium
+#### 4.5 Implicação para o desenho do Diarium
 
 A função das categorias de distorção no sistema deve ser predominantemente **organizacional e investigativa**.
 
@@ -982,7 +982,6 @@ Sono ruim causa seu estresse.
 O TDAH está associado, em parte das pessoas, a dificuldades em diferentes funções executivas. Entretanto, a relação não é uniforme entre indivíduos, e o TDAH deve ser entendido como uma condição neurodesenvolvimental heterogênea, não como um simples déficit global de funções executivas.
 
 Essa distinção é importante para o desenho do Diarium.
-
 ### 7.1 O problema do diário narrativo não é universal
 
 Um diário narrativo aberto pode exigir simultaneamente:
@@ -1335,7 +1334,7 @@ O mesmo limite se aplica aos experimentos comportamentais. Experimentos comporta
 
 Assim, o LLM deve ser entendido como uma ferramenta de **apoio à reflexão estruturada**, e não como terapeuta, avaliador clínico ou sistema autônomo de tomada de decisão em saúde mental.
 
-### 10. Segurança clínica: triagem de risco como requisito de design, não comportamento emergente
+## 10. Segurança clínica: triagem de risco como requisito de design, não comportamento emergente
 
 Ferramentas digitais de saúde mental que processam texto livre enfrentam um problema estrutural: uma entrada originalmente destinada ao registro de pensamentos, emoções ou acontecimentos pode conter sinais de sofrimento intenso ou de risco. Um sistema que executa apenas a análise cognitiva poderia tratar esse conteúdo como mais um elemento textual e, com isso, deixar de aplicar uma resposta de segurança apropriada.
 
@@ -1343,7 +1342,7 @@ Por esse motivo, a segurança não deve depender de uma inferência incidental p
 
 Essa separação é consistente com a literatura sobre segurança em intervenções digitais de saúde mental, que destaca a necessidade de identificar riscos, monitorar eventos adversos e estabelecer mecanismos explícitos de mitigação. Revisões da área também mostram que as práticas de avaliação de segurança ainda são heterogêneas, reforçando a necessidade de especificar esses mecanismos como parte do próprio desenho da intervenção (Taher et al., 2023).
 
-#### 10.1 Reconhecimento de possível risco não é avaliação clínica de gravidade
+### 10.1 Reconhecimento de possível risco não é avaliação clínica de gravidade
 
 Instrumentos como a Columbia-Suicide Severity Rating Scale (C-SSRS) utilizam perguntas estruturadas para investigar diferentes aspectos do risco e podem ser utilizados em diferentes contextos e por diferentes usuários, conforme o protocolo empregado. O Diarium não implementa a C-SSRS nem possui validação que permita tratar sua análise de texto livre como equivalente a esse instrumento.
 
@@ -1356,7 +1355,7 @@ Portanto, o sistema não deve apresentar sua saída como:
 
 O objetivo do componente de segurança é mais restrito: **reconhecer possíveis sinais que exigem uma resposta de segurança diferente da análise cognitiva habitual** e direcionar o usuário para apoio humano apropriado.
 
-#### 10.2 Segurança deve ser uma política do sistema, não uma conclusão livre do LLM
+### 10.2 Segurança deve ser uma política do sistema, não uma conclusão livre do LLM
 
 A detecção de um possível sinal de risco e a resposta apresentada ao usuário devem ser conceitualmente separadas.
 
@@ -1385,7 +1384,7 @@ normal       análise normal
 
 Essa separação reduz a dependência de geração livre justamente na parte do sistema em que inconsistências podem produzir consequências mais graves.
 
-#### 10.3 Limiar de decisão como escolha de engenharia de segurança
+### 10.3 Limiar de decisão como escolha de engenharia de segurança
 
 Qualquer mecanismo automatizado de reconhecimento de risco apresenta incerteza. O Diarium deve considerar explicitamente os custos assimétricos de falsos positivos e falsos negativos.
 
@@ -1401,7 +1400,7 @@ avaliação clínica de gravidade
 
 O primeiro é uma propriedade do sistema. O segundo exige um processo clínico estruturado.
 
-#### 10.4 Limitação arquitetural: análise sob demanda
+### 10.4 Limitação arquitetural: análise sob demanda
 
 O Diarium funciona sob demanda. Portanto, uma análise de segurança só ocorre quando o usuário executa explicitamente a operação correspondente.
 
@@ -1411,7 +1410,7 @@ Uma entrada registrada durante um período de sofrimento pode permanecer sem an�
 
 Essa limitação deve ser tratada como uma propriedade arquitetural explícita do produto, e não apenas como uma advertência clínica.
 
-#### 10.5 Limites do papel do sistema
+### 10.5 Limites do papel do sistema
 
 O papel do componente de segurança termina na identificação de um possível sinal relevante e na execução de uma resposta previamente definida de orientação e encaminhamento.
 
@@ -1427,7 +1426,7 @@ O objetivo do mecanismo é criar uma barreira de segurança entre a entrada do u
 
 Essa abordagem também é coerente com a literatura sobre LLMs em saúde mental, que destaca tanto o potencial dessas tecnologias quanto riscos relacionados a respostas incorretas, interpretação inadequada de contexto e dificuldade de lidar de maneira confiável com situações de sofrimento intenso. Portanto, aplicações desse tipo devem operar com mecanismos explícitos de segurança e supervisão apropriada, e não como sistemas autônomos de decisão clínica.
 
-# Referências
+## Referências
 
 * Beck, A. T., Rush, A. J., Shaw, B. F., & Emery, G. (1979). *Cognitive Therapy of Depression*. Guilford Press.
 * Beck, J. S. (2020). *Cognitive Behavior Therapy: Basics and Beyond* (3rd ed.). Guilford Press.
