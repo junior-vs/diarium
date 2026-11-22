@@ -20,6 +20,7 @@ dá controle explícito sobre quando enviar dados sensíveis à API externa.
 ## ADR-003: LLM Adapter (abstração de provedor)
 
 **Data:** 2026-09-03
+**Status:** Superado por ADR-025
 **Decisão:** Isolar chamadas ao LLM atrás de uma interface comum (adapter pattern).
 **Motivo:** Requisito explícito de migração futura para modelo local (Ollama), sem
 acoplar o core do sistema a uma API específica.
@@ -69,6 +70,7 @@ duplicado, o que vai contra o princípio de baixa fricção (ADR-005).
 ## ADR-009: Separação core + CLI desde o MVP
 
 **Data:** 2026-09-03
+**Status:** Parcialmente superado por ADR-027 (proposto)
 **Decisão:** Estruturar o projeto Python em `core/` (lógica de negócio: parser, análise,
 relatório, LLM adapter) separado de `cli/` (ponto de entrada). CLI chama apenas `core/`,
 nunca contém regra de negócio.
@@ -92,6 +94,7 @@ schema/function definido, não apenas texto de instrução solto.
 ## ADR-011: Gemini como primeiro provedor de LLM
 
 **Data:** 2026-09-03
+**Status:** Superado por ADR-025
 **Decisão:** Implementar `GeminiAdapter` como primeira implementação concreta de
 `LLMAdapter` (via SDK `google-generativeai`), suportando saída estruturada nativamente.
 **Motivo:** Escolha do usuário para o MVP. Suporte nativo a `response_schema` facilita
@@ -134,6 +137,7 @@ intervalo.
 **Decisão:** O CLI deve usar as notas brutas como fonte de verdade para gerar análises e
 relatórios. Ao encontrar saídas pré-existentes, deve avisar o usuário e regenerar o conteúdo
 a partir das notas de origem, em vez de depender das saídas antigas como base principal.
+**Nota (2026-11-21):** Reafirmado: vale na v2. Não há reaproveitamento de análises da v1.
 **Motivo:** Evita acúmulo de resultados derivados como fonte secundária e garante que a
 consolidação reflita a versão mais recente das entradas do diário.
 
@@ -148,6 +152,7 @@ auditáveis sem se misturar a refatorações de código.
 ## ADR-017: Adapter primeiro com implementação fake para testes
 
 **Data:** 2026-09-03
+**Nota (2026-11-21):** O fake de LLM deixa de existir com ADR-025; o substituto de teste está em aberto (ver `stack.md`).
 **Decisão:** A primeira etapa de integração do LLM deve priorizar o adapter com uma
 implementação fake/mock para testes, antes de conectar o provedor real.
 **Motivo:** Permite validar parser, análise e relatório sem depender de API externa, reduzindo
@@ -313,3 +318,78 @@ o foco da arquitetura no processamento via CLI e no formato Markdown.
 **Alternativas consideradas:** Tornar a estrutura de pastas totalmente livre nesta
 mudança — descartado por aumentar escopo e quebrar convenções de entrada/saída já
 adotadas no projeto.
+
+## ADR-024: v2 como reescrita; diarium-app descartado
+
+**Data:** 2026-11-21
+**Status:** Aceito
+**Decisão:** A v2 é uma nova implementação. O `diarium-app` permanece no repositório
+apenas como histórico, sem manutenção.
+**Motivo:** O projeto é um laboratório de aprendizagem; a v1 serviu como protótipo e a v2
+adota nova stack (ADR-025, ADR-026).
+**Implicação:** A documentação é revista antes de qualquer código, para resolver
+ambiguidades e contradições herdadas da v1.
+
+## ADR-025: LangChain direto, multi-provedor
+
+**Data:** 2026-11-21
+**Status:** Aceito. Supera ADR-003 e ADR-011.
+**Decisão:** O acesso ao LLM é feito diretamente via LangChain, sem interface própria
+(`LLMAdapter`). Provedores-alvo: Claude, Gemini, OpenAI e outros suportados pelo
+LangChain, selecionáveis por configuração (RF11, RNF02).
+**Motivo:** Poder usar qualquer provedor trocando configuração; o LangChain já fornece
+essa abstração.
+**Implicação:**
+
+- ADR-010 (saída estruturada validada) continua válido; o mecanismo concreto no
+  LangChain é [verificar] na documentação atual (ver `stack.md`).
+- As menções a `LLMAdapter` e `screen_risk` em ADR-010, ADR-020 e ADR-022 descrevem a
+  camada de acesso ao LLM da v1. Os princípios se mantêm (saída estruturada validada,
+  triagem de risco separada, bloco de segurança inserido por código); o mecanismo é
+  redefinido em `architecture.md`.
+- O substituto do fake de teste (ADR-017) está em aberto.
+
+**Alternativas consideradas:** Manter `LLMAdapter` próprio sobre o LangChain — descartado
+por redundância.
+
+## ADR-026: LangGraph como orquestrador do fluxo
+
+**Data:** 2026-11-21
+**Status:** Aceito
+**Decisão:** O fluxo de processamento é orquestrado com LangGraph.
+**Motivo:** Objetivo de aprendizagem em orquestração de fluxos com LLM (projeto de
+aprendizagem, ADR-024).
+**Implicação:** O princípio de ADR-022 (triagem separada; bloco de segurança inserido por
+código, nunca pelo LLM) se mantém. O mecanismo precisa ser redesenhado para a nova stack,
+em `architecture.md`.
+
+## ADR-027: Arquitetura em camadas deixa de ser obrigatória
+
+**Data:** 2026-11-21
+**Status:** Proposto
+**Decisão:** Fronteiras arquiteturais só onde há variação real. Mantêm-se modelos de
+domínio, funções puras e o código determinístico de segurança. A porta de LLM sai
+(ADR-025). A porta de repositório de arquivos é decidida na revisão, à luz do ADR-001.
+**Motivo:** A v1 aplicou camadas além do necessário para o tamanho do projeto.
+
+## ADR-028: Separação de documentos: especificação agnóstica de tecnologia
+
+**Data:** 2026-11-21
+**Status:** Aceito
+**Decisão:** `specification.md` descreve o que o sistema deve fazer, sem detalhes de
+implementação. Stack, arquitetura e plano de implementação ficam em documentos próprios:
+`stack.md`, `architecture.md` e `implementation-plan.md`.
+**Motivo:** Manter a especificação estável diante de mudanças de tecnologia, como a
+troca de stack da v1 para a v2.
+
+## ADR-029: Avaliação como requisito
+
+**Data:** 2026-11-21
+**Status:** Aceito
+**Decisão:** O conjunto de referência e as métricas de avaliação (RNF08–RNF12) são
+requisitos da especificação. Prompt, modelo ou provedor não mudam sem rodar a avaliação.
+**Motivo:** Sem casos de teste e métricas, não é possível saber se uma mudança melhorou
+ou piorou o sistema. A triagem de risco (ADR-022) é a peça mais crítica e, na v1, só era
+testada com implementação fake.
+**Implicação:** O conjunto de referência usa apenas casos sintéticos, nunca entradas
+reais (RNF01). A ferramenta de avaliação é definida em `stack.md`.

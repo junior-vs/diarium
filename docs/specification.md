@@ -12,6 +12,10 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 (Pennebaker) nem reivindica seus efeitos, que na literatura são pequenos e heterogêneos
 (`theoretical-background.md` §6).
 
+Projeto de aprendizagem. A v2 reescreve a v1 a partir desta especificação revisada
+(ADR-024); esta especificação descreve o que o sistema deve fazer, sem prescrever
+tecnologia (ADR-028).
+
 ## 2. Objetivos
 
 - Ajudar o usuário a registrar e refletir sobre pensamentos/eventos diários, com baixa
@@ -34,7 +38,7 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 - CLI para análise individual de entrada (`diario-tcc analisar`).
 - CLI para relatório de período, com presets diário/semanal/mensal (`diario-tcc relatorio`).
 - CLI para relatório de tendência, para intervalos longos (trimestral/semestral/anual).
-- LLM Adapter com suporte a pelo menos um provedor de API, isolado por interface.
+- Suporte a múltiplos provedores de LLM, selecionável por configuração.
 - Biblioteca de prompts guiados (registro) e de análise/consolidação.
 - Triagem de risco separada da análise TCC, com bloco de segurança determinístico.
 - Rodapé de limite de papel, fixo e incondicional, em toda saída.
@@ -68,7 +72,7 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 | RF08 | O relatório de tendência depende de sub-períodos já processados; se faltarem, o sistema deve indicar quais em vez de agregar dados incompletos silenciosamente. |
 | RF09 | As seções de correlação de hábitos (RF13) e tema recorrente (RF14) só devem ser geradas quando o número de entradas do período/sub-período atingir um mínimo configurável (default: 5). Abaixo disso, indicar "dados insuficientes" explicitamente. |
 | RF10 | O sistema deve oferecer prompts guiados (biblioteca pré-definida) para auxiliar o usuário a escrever a entrada. |
-| RF11 | O provedor de LLM deve ser configurável (API key + endpoint/modelo), permitindo troca futura sem alterar o core. |
+| RF11 | O provedor de LLM deve ser selecionável por configuração, sem alterar o comportamento funcional do sistema. |
 | RF12 | O sistema deve ler campos estruturados do front-matter (hábitos, humor, sono, etc.) para compor os relatórios, sem depender do LLM para extrair esses dados. |
 | RF13 | Os relatórios devem relacionar hábitos rastreados (sono, estresse, energia) com padrões emocionais/distorções do período, usando exclusivamente linguagem de associação observada. Nunca linguagem causal ou mecanismo neurobiológico (§8.6). |
 | RF14 | Os relatórios devem evidenciar temas ou crenças recorrentes por trás de distorções/situações aparentemente distintas, como observação para reflexão (pergunta aberta), nunca como rótulo clínico, nome de schema ou crença nuclear (§5.5, ADR-021). |
@@ -82,12 +86,17 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 | ID | Requisito |
 | ---- | ----------- |
 | RNF01 | Dados sensíveis (diários) não devem ser persistidos fora do ambiente local do usuário, exceto na chamada à API do LLM. |
-| RNF02 | Arquitetura deve isolar a camada de LLM (adapter/interface) para permitir troca de provedor sem refatoração ampla. |
+| RNF02 | O sistema não deve depender de um provedor de LLM específico para funcionar. |
 | RNF03 | Formato de entrada/saída deve ser markdown puro, independente da ferramenta de autoria (incluindo Obsidian como opção). |
 | RNF04 | Execução via linha de comando (CLI), sem dependência de interface gráfica própria. |
 | RNF05 | O template de entrada deve minimizar carga cognitiva e função executiva exigida. Hipótese de design orientada a TDAH, não alegação de eficácia clínica (§7.2, §7.4). |
 | RNF06 | O sistema não deve se apresentar como ferramenta de resposta a emergências em tempo real — a triagem ocorre apenas quando o CLI é executado sob demanda (ADR-002). |
 | RNF07 | Toda saída interpretativa do LLM (RF03, RF04, RF13, RF14) deve seguir linguagem epistêmica hedged (hipótese revisável, pergunta, associação observada), nunca linguagem categórica, causal ou de conclusão clínica fechada (§3.6, §4.2, §5.5, §8.6, §9). |
+| RNF08 | O projeto deve manter um conjunto de referência versionado de casos sintéticos (nunca entradas reais do diário), cobrindo: risco explícito, risco implícito/ambíguo, ausência de risco, distorções esperadas e entradas incompletas. Tamanho mínimo: [definir]. |
+| RNF09 | Na triagem de risco (RF15), a métrica prioritária é recall: nenhum caso de risco explícito do conjunto de referência pode passar sem detecção (meta: 100%). Falsos positivos são tolerados e devem ser medidos e reportados. |
+| RNF10 | Todo trecho citado na análise deve existir literalmente na entrada (verificável por código). A identificação de distorções (RF03) é medida contra rótulos de referência, com limiar de aceitação [definir]. |
+| RNF11 | A saída interpretativa não pode conter linguagem categórica, causal ou diagnóstica (RNF07), medido sobre o conjunto de referência. |
+| RNF12 | A avaliação deve ser executável sob demanda e obrigatória antes de mudar prompt, modelo ou provedor. Cada execução registra as versões usadas, para comparação entre execuções (ADR-029). |
 
 ## 6. Critérios de Aceite
 
@@ -96,7 +105,10 @@ longitudinal de diário narrativo livre — não é uma implementação de *expr
 - Relatório de período com menos de 5 entradas indica "dados insuficientes" nas seções de correlação/tema, em vez de omiti-las ou forçar conclusão.
 - Relatório de tendência sobre um semestre com sub-períodos mensais faltantes indica quais faltam, em vez de agregar parcialmente sem aviso.
 - Nenhuma saída do sistema nomeia schema clínico, crença nuclear ou diagnóstico.
-- Trocar o provedor de LLM (via config) não exige alteração no código core.
+- Trocar o provedor de LLM por configuração mantém o comportamento funcional descrito nesta especificação.
+- A avaliação (RNF08–RNF12) roda e produz um relatório comparável com a execução anterior.
+- Nenhum caso de risco explícito do conjunto de referência deixa de ser detectado.
+- Nenhuma citação da análise é inventada (todo trecho citado existe na entrada).
 
 ## 7. Riscos / Pontos de Atenção
 

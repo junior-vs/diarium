@@ -45,7 +45,7 @@ Ao modificar ou criar código, respeite rigorosamente as decisões arquiteturais
 8. **Tema recorrente sem rótulo de schema (ADR-021):** `ReportResult.tema_recorrente` é sempre formulado como pergunta; nunca nomear taxonomia clínica (ex: Early Maladaptive Schemas).
 9. **Triagem de risco separada e determinística (ADR-022):** `screen_risk` roda antes e independentemente de `analyze_entry`; resultado é enum estruturado (`RiskScreeningResult`), nunca texto livre; bloco de segurança é conteúdo estático versionado, inserido por código.
 10. **Sem Redundância entre Front-matter e Conteúdo Visual (ADR-007).**
-11. **Plugins Core no Obsidian (ADR-008).**
+
 
 ---
 
